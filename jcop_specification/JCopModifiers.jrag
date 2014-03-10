@@ -1,0 +1,37 @@
+/*
+ *
+ */
+aspect JCopModifiers {  
+  
+  syn boolean MethodDecl.isBefore() = getModifiers().isBefore();
+  syn boolean MethodDecl.isAfter() = getModifiers().isAfter();
+  syn boolean FieldDeclaration.isBefore() = getModifiers().isBefore();
+  syn boolean FieldDeclaration.isAfter() = getModifiers().isAfter();
+  
+  syn boolean TypeDecl.isBefore() = getModifiers().isBefore();
+  syn boolean TypeDecl.isAfter() = getModifiers().isAfter();
+  
+  syn lazy boolean Modifiers.isBefore() = numModifier("before") != 0;
+  syn lazy boolean Modifiers.isAfter() = numModifier("after") != 0;
+  
+  refine Modifiers public void TypeDecl.checkModifiers() {
+     if(isBefore())
+      error("before pertains only to partial method declarations");
+	 if(isAfter())
+      error("after pertains only to partial method declarations");
+  }
+  
+  refine Modifiers public void MethodDecl.checkModifiers() {
+     if(isBefore() && !isPartialMethod())
+      error("before pertains only to partial method declarations");
+	 if(isAfter() && !isPartialMethod())
+      error("after pertains only to partial method declarations");
+  }
+  
+  refine Modifiers public void FieldDeclaration.checkModifiers() {
+     if(isBefore())
+      error("before pertains only to partial method declarations");
+	 if(isAfter())
+      error("after pertains only to partial method declarations");
+  }
+}

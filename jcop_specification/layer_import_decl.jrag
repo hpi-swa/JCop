@@ -1,0 +1,28 @@
+aspect LayerImportDecl {
+   rewrite LayerImportDecl {
+      to ASTNode {	
+		
+	jcop.transformation.LayerImportDeclTransformer transformer = 
+	   	new jcop.transformation.LayerImportDeclTransformer(this);	
+	return transformer.errorCheckAndTransform((CompilationUnit)parent.parent);
+    }}
+
+    public void LayerImportDecl.toString(StringBuffer b) {
+       	b.append("import layer ");
+       	b.append(getAccess().toString());
+       	b.append(";");
+    }
+
+    public TypeDecl LayerImportDecl.type() {
+      	return getAccess().type();
+    }
+	
+    private void LayerImportDecl.addImport(String typename) {
+       ((List)getParent()).add(
+          new SingleTypeImportDecl(
+	     	new TypeAccess(jcop.Globals.jcopPackage, typename)));
+    }
+    
+    private static HashSet<CompilationUnit> LayerImportDecl.visitedUnits = 
+       new HashSet<CompilationUnit>();
+}

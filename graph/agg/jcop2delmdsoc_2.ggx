@@ -1,0 +1,1141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Document version="1.0">
+    <GraphTransformationSystem ID="I1" name="GraGra">
+        <TaggedValue Tag="AttrHandler" TagValue="Java Expr">
+            <TaggedValue Tag="Package" TagValue="java.lang"/>
+            <TaggedValue Tag="Package" TagValue="java.util"/>
+            <TaggedValue Tag="Package" TagValue="com.objectspace.jgl"/>
+            <TaggedValue Tag="Package" TagValue="automata_impl"/>
+            <TaggedValue Tag="Package" TagValue="automata"/>
+            <TaggedValue Tag="Package" TagValue="automata.impl"/>
+            <TaggedValue Tag="Package" TagValue="org.eclipse.draw2d"/>
+            <TaggedValue Tag="Package" TagValue="org.eclipse.draw2d.geometry"/>
+            <TaggedValue Tag="Package" TagValue="org.eclipse.swt.graphics"/>
+        </TaggedValue>
+        <TaggedValue Tag="CSP" TagValue="true"/>
+        <TaggedValue Tag="injective" TagValue="true"/>
+        <TaggedValue Tag="identification" TagValue="true"/>
+        <TaggedValue Tag="NACs" TagValue="true"/>
+        <TaggedValue Tag="PACs" TagValue="true"/>
+        <TaggedValue Tag="layered" TagValue="true"/>
+        <TaggedValue Tag="breakAllLayer" TagValue="true"/>
+        <TaggedValue Tag="showGraphAfterStep" TagValue="true"/>
+        <TaggedValue Tag="TypeGraphLevel" TagValue="DISABLED"/>
+        <Types>
+            <NodeType ID="I2" abstract="false" name="AstNode%:RECT:java.awt.Color[r=0,g=0,b=0]:[NODE]:"/>
+            <NodeType ID="I4" abstract="false" name="Program%:RECT:java.awt.Color[r=0,g=0,b=0]:[NODE]:">
+                <Parent pID="I2"/>
+            </NodeType>
+            <NodeType ID="I6" abstract="false" name="Statement%:RECT:java.awt.Color[r=0,g=0,b=0]:[NODE]:">
+                <Parent pID="I2"/>
+            </NodeType>
+            <NodeType ID="I8" abstract="false" name="Expression%:RECT:java.awt.Color[r=0,g=0,b=0]:[NODE]:">
+                <Parent pID="I6"/>
+            </NodeType>
+            <NodeType ID="I10" abstract="false" name="If%:RECT:java.awt.Color[r=0,g=0,b=0]:[NODE]:">
+                <Parent pID="I6"/>
+            </NodeType>
+            <NodeType ID="I12" abstract="false" name="Class%:RECT:java.awt.Color[r=0,g=0,b=0]:[NODE]:">
+                <Parent pID="I2"/>
+                <AttrType ID="I14" attrname="name" typename="String" visible="true"/>
+            </NodeType>
+            <NodeType ID="I15" abstract="false" name="Field%:RECT:java.awt.Color[r=0,g=0,b=0]:[NODE]:">
+                <Parent pID="I2"/>
+                <AttrType ID="I17" attrname="name" typename="String" visible="true"/>
+            </NodeType>
+            <NodeType ID="I18" abstract="false" name="Method%:RECT:java.awt.Color[r=0,g=0,b=0]:[NODE]:">
+                <Parent pID="I2"/>
+                <AttrType ID="I20" attrname="name" typename="String" visible="true"/>
+            </NodeType>
+            <NodeType ID="I21" abstract="false" name="Return%:RECT:java.awt.Color[r=0,g=0,b=0]:[NODE]:">
+                <Parent pID="I6"/>
+            </NodeType>
+            <NodeType ID="I23" abstract="false" name="Print%:RECT:java.awt.Color[r=0,g=0,b=0]:[NODE]:">
+                <Parent pID="I6"/>
+            </NodeType>
+            <NodeType ID="I25" abstract="false" name="Instantiation%:RECT:java.awt.Color[r=0,g=0,b=0]:[NODE]:">
+                <Parent pID="I8"/>
+            </NodeType>
+            <NodeType ID="I27" abstract="false" name="Assignment%:RECT:java.awt.Color[r=0,g=0,b=0]:[NODE]:">
+                <Parent pID="I8"/>
+            </NodeType>
+            <NodeType ID="I29" abstract="false" name="MethodCall%:RECT:java.awt.Color[r=0,g=0,b=0]:[NODE]:">
+                <Parent pID="I8"/>
+            </NodeType>
+            <NodeType ID="I31" abstract="false" name="BinaryOperation%:RECT:java.awt.Color[r=0,g=0,b=0]:[NODE]:">
+                <Parent pID="I8"/>
+            </NodeType>
+            <NodeType ID="I33" abstract="false" name="UnaryOperation%:RECT:java.awt.Color[r=0,g=0,b=0]:[NODE]:">
+                <Parent pID="I8"/>
+            </NodeType>
+            <NodeType ID="I35" abstract="false" name="Reference%:RECT:java.awt.Color[r=0,g=0,b=0]:[NODE]:">
+                <Parent pID="I8"/>
+            </NodeType>
+            <NodeType ID="I37" abstract="false" name="Identifier%:RECT:java.awt.Color[r=0,g=0,b=0]:[NODE]:">
+                <Parent pID="I35"/>
+                <AttrType ID="I39" attrname="name" typename="String" visible="true"/>
+            </NodeType>
+            <NodeType ID="I40" abstract="false" name="This%:RECT:java.awt.Color[r=0,g=0,b=0]:[NODE]:">
+                <Parent pID="I35"/>
+            </NodeType>
+            <NodeType ID="I42" abstract="false" name="Literal%:RECT:java.awt.Color[r=0,g=0,b=0]:[NODE]:">
+                <Parent pID="I8"/>
+            </NodeType>
+            <NodeType ID="I44" abstract="false" name="Integer%:RECT:java.awt.Color[r=0,g=0,b=0]:[NODE]:">
+                <Parent pID="I42"/>
+                <AttrType ID="I46" attrname="value" typename="Integer" visible="true"/>
+            </NodeType>
+            <NodeType ID="I47" abstract="false" name="Boolean%:RECT:java.awt.Color[r=0,g=0,b=0]:[NODE]:">
+                <Parent pID="I42"/>
+                <AttrType ID="I49" attrname="value" typename="Boolean" visible="true"/>
+            </NodeType>
+            <NodeType ID="I50" abstract="false" name="String%:RECT:java.awt.Color[r=0,g=0,b=0]:[NODE]:">
+                <Parent pID="I42"/>
+                <AttrType ID="I52" attrname="value" typename="String" visible="true"/>
+            </NodeType>
+            <NodeType ID="I53" abstract="false" name="Null%:RECT:java.awt.Color[r=0,g=0,b=0]:[NODE]:">
+                <Parent pID="I42"/>
+            </NodeType>
+            <NodeType ID="I55" abstract="false" name="Parameter%:RECT:java.awt.Color[r=0,g=0,b=0]:[NODE]:">
+                <Parent pID="I2"/>
+                <AttrType ID="I57" attrname="name" typename="String" visible="true"/>
+            </NodeType>
+            <NodeType ID="I58" abstract="false" name="FieldReference%:RECT:java.awt.Color[r=0,g=0,b=0]:[NODE]:">
+                <Parent pID="I35"/>
+            </NodeType>
+            <NodeType ID="I60" abstract="false" name="Actor%:ROUNDRECT:java.awt.Color[r=191,g=0,b=0]:[NODE]:"/>
+            <NodeType ID="I61" abstract="false" name="Object%:ROUNDRECT:java.awt.Color[r=0,g=0,b=0]:[NODE]:">
+                <AttrType ID="I63" attrname="name" typename="String" visible="true"/>
+                <AttrType ID="I64" attrname="messages"
+                    typename="MsgBodyMap" visible="true"/>
+            </NodeType>
+            <NodeType ID="I65" abstract="false" name="Message%:RECT:java.awt.Color[r=0,g=102,b=1]:[NODE]:">
+                <AttrType ID="I67" attrname="name" typename="String" visible="true"/>
+                <AttrType ID="I68" attrname="body" typename="MsgBody" visible="true"/>
+                <AttrType ID="I69" attrname="curInstr"
+                    typename="Statement" visible="true"/>
+            </NodeType>
+            <EdgeType ID="I70" abstract="false" name="contains%:SOLID_LINE:java.awt.Color[r=0,g=0,b=0]:[EDGE]:"/>
+            <EdgeType ID="I71" abstract="false" name="nextStmt%:SOLID_LINE:java.awt.Color[r=0,g=0,b=0]:[EDGE]:"/>
+            <EdgeType ID="I72" abstract="false" name="lhs%:SOLID_LINE:java.awt.Color[r=0,g=0,b=0]:[EDGE]:"/>
+            <EdgeType ID="I73" abstract="false" name="rhs%:SOLID_LINE:java.awt.Color[r=0,g=0,b=0]:[EDGE]:"/>
+            <EdgeType ID="I74" abstract="false" name="ifBody%:SOLID_LINE:java.awt.Color[r=0,g=0,b=0]:[EDGE]:"/>
+            <EdgeType ID="I75" abstract="false" name="elseBody%:SOLID_LINE:java.awt.Color[r=0,g=0,b=0]:[EDGE]:"/>
+            <EdgeType ID="I76" abstract="false" name="condition%:SOLID_LINE:java.awt.Color[r=0,g=0,b=0]:[EDGE]:"/>
+            <EdgeType ID="I77" abstract="false" name="nextParameter%:SOLID_LINE:java.awt.Color[r=0,g=0,b=0]:[EDGE]:"/>
+            <EdgeType ID="I78" abstract="false" name="receiver%:SOLID_LINE:java.awt.Color[r=0,g=0,b=0]:[EDGE]:"/>
+            <EdgeType ID="I79" abstract="false" name="nextMethod%:SOLID_LINE:java.awt.Color[r=0,g=0,b=0]:[EDGE]:"/>
+            <EdgeType ID="I80" abstract="false" name="tag%:SOLID_LINE:java.awt.Color[r=172,g=187,b=5]:[EDGE]:"/>
+            <EdgeType ID="I81" abstract="false" name="contains%:SOLID_LINE:java.awt.Color[r=191,g=0,b=0]:[EDGE]:"/>
+            <EdgeType ID="I82" abstract="false" name="delegate%:SOLID_LINE:java.awt.Color[r=0,g=0,b=0]:[EDGE]:"/>
+            <EdgeType ID="I83" abstract="false" name="self%:DOT_LINE:java.awt.Color[r=96,g=2,b=153]:[EDGE]:"/>
+            <EdgeType ID="I84" abstract="false" name="mailNext%:DASH_LINE:java.awt.Color[r=0,g=1,b=153]:[EDGE]:"/>
+            <EdgeType ID="I85" abstract="false" name="processNext%:DASH_LINE:java.awt.Color[r=0,g=1,b=153]:[EDGE]:"/>
+            <EdgeType ID="I86" abstract="false" name="lookupResult%:DOT_LINE:java.awt.Color[r=0,g=102,b=1]:[EDGE]:"/>
+            <EdgeType ID="I87" abstract="false" name="lookup%:DOT_LINE:java.awt.Color[r=0,g=100,b=0]:[EDGE]:"/>
+            <EdgeType ID="I88" abstract="false" name="future%:DOT_LINE:java.awt.Color[r=117,g=0,b=117]:[EDGE]:"/>
+            <EdgeType ID="I89" abstract="false" name="mailLast%:DASH_LINE:java.awt.Color[r=0,g=1,b=153]:[EDGE]:"/>
+            <EdgeType ID="I90" abstract="false" name="param%:DOT_LINE:java.awt.Color[r=102,g=0,b=255]:[EDGE]:"/>
+            <Graph ID="I91" kind="TG" name="TypeGraph">
+                <Node ID="I92" type="I2">
+                    <NodeLayout X="607" Y="72"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Node ID="I94" type="I4">
+                    <NodeLayout X="249" Y="156"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Node ID="I96" type="I6">
+                    <NodeLayout X="705" Y="156"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Node ID="I98" type="I10">
+                    <NodeLayout X="704" Y="267"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Node ID="I100" type="I18">
+                    <NodeLayout X="426" Y="156"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Node ID="I102" type="I15">
+                    <NodeLayout X="517" Y="156"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Node ID="I104" type="I12">
+                    <NodeLayout X="334" Y="156"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Node ID="I106" type="I8">
+                    <NodeLayout X="638" Y="266"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Node ID="I108" type="I23">
+                    <NodeLayout X="821" Y="266"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Node ID="I110" type="I21">
+                    <NodeLayout X="758" Y="267"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Node ID="I112" type="I25">
+                    <NodeLayout X="329" Y="357"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Node ID="I114" type="I27">
+                    <NodeLayout X="426" Y="358"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Node ID="I116" type="I29">
+                    <NodeLayout X="513" Y="359"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Node ID="I118" type="I33">
+                    <NodeLayout X="715" Y="357"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Node ID="I120" type="I31">
+                    <NodeLayout X="610" Y="357"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Node ID="I122" type="I42">
+                    <NodeLayout X="1051" Y="357"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Node ID="I124" type="I50">
+                    <NodeLayout X="1019" Y="433"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Node ID="I126" type="I53">
+                    <NodeLayout X="1186" Y="431"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Node ID="I128" type="I44">
+                    <NodeLayout X="927" Y="434"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Node ID="I130" type="I47">
+                    <NodeLayout X="1108" Y="433"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Node ID="I132" type="I37">
+                    <NodeLayout X="684" Y="434"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Node ID="I134" type="I40">
+                    <NodeLayout X="747" Y="434"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Node ID="I136" type="I55">
+                    <NodeLayout X="605" Y="156"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Node ID="I138" type="I35">
+                    <NodeLayout X="812" Y="356"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Node ID="I140" type="I58">
+                    <NodeLayout X="825" Y="433"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+            </Graph>
+        </Types>
+        <Graph ID="I142"
+            comment="This graph is the AST of the following example:&#xd;&#xa;&#xd;&#xa;class Example {&#xd;&#xa;&#x9;int i=0;&#xd;&#xa;&#x9;int j=i;&#xd;&#xa;&#xd;&#xa;&#x9;int someMethod(int x){&#xd;&#xa;&#x9;&#x9;return x;&#xd;&#xa;&#x9;}&#xd;&#xa;}"
+            kind="HOST" name="Example">
+            <Node ID="I143" type="I4">
+                <NodeLayout X="583" Y="51"/>
+                <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+            </Node>
+            <Node ID="I145" type="I12">
+                <Attribute constant="true" type="I14">
+                    <Value>
+                        <java class="java.beans.XMLDecoder" version="1.6.0_21">
+                            <string>Example</string>
+                        </java>
+                    </Value>
+                </Attribute>
+                <NodeLayout X="584" Y="109"/>
+                <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+            </Node>
+            <Node ID="I148" type="I15">
+                <Attribute constant="true" type="I17">
+                    <Value>
+                        <java class="java.beans.XMLDecoder" version="1.6.0_21">
+                            <string>i</string>
+                        </java>
+                    </Value>
+                </Attribute>
+                <NodeLayout X="408" Y="206"/>
+                <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+            </Node>
+            <Node ID="I151" type="I15">
+                <Attribute constant="true" type="I17">
+                    <Value>
+                        <java class="java.beans.XMLDecoder" version="1.6.0_21">
+                            <string>j</string>
+                        </java>
+                    </Value>
+                </Attribute>
+                <NodeLayout X="490" Y="209"/>
+                <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+            </Node>
+            <Node ID="I154" type="I18">
+                <Attribute constant="true" type="I20">
+                    <Value>
+                        <java class="java.beans.XMLDecoder" version="1.6.0_21">
+                            <string>someMethod</string>
+                        </java>
+                    </Value>
+                </Attribute>
+                <NodeLayout X="663" Y="207"/>
+                <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+            </Node>
+            <Node ID="I157" type="I21">
+                <NodeLayout X="663" Y="342"/>
+                <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+            </Node>
+            <Node ID="I159" type="I37">
+                <Attribute constant="true" type="I39">
+                    <Value>
+                        <java class="java.beans.XMLDecoder" version="1.6.0_21">
+                            <string>x</string>
+                        </java>
+                    </Value>
+                </Attribute>
+                <NodeLayout X="775" Y="342"/>
+                <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+            </Node>
+            <Node ID="I162" type="I55">
+                <Attribute constant="true" type="I57">
+                    <Value>
+                        <java class="java.beans.XMLDecoder" version="1.6.0_21">
+                            <string>x</string>
+                        </java>
+                    </Value>
+                </Attribute>
+                <NodeLayout X="788" Y="267"/>
+                <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+            </Node>
+            <Edge ID="I165" source="I143" target="I145" type="I70">
+                <EdgeLayout bendX="0" bendY="0" textOffsetX="7" textOffsetY="-15"/>
+                <additionalLayout aktlength="200" force="10" preflength="200"/>
+            </Edge>
+            <Edge ID="I166" source="I145" target="I148" type="I70">
+                <EdgeLayout bendX="0" bendY="0" textOffsetX="-19" textOffsetY="-19"/>
+                <additionalLayout aktlength="200" force="10" preflength="200"/>
+            </Edge>
+            <Edge ID="I167" source="I145" target="I151" type="I70">
+                <EdgeLayout bendX="0" bendY="0" textOffsetX="0" textOffsetY="-22"/>
+                <additionalLayout aktlength="200" force="10" preflength="200"/>
+            </Edge>
+            <Edge ID="I168" source="I145" target="I154" type="I70">
+                <EdgeLayout bendX="0" bendY="0" textOffsetX="0" textOffsetY="-22"/>
+                <additionalLayout aktlength="200" force="10" preflength="200"/>
+            </Edge>
+            <Edge ID="I169" source="I154" target="I157" type="I71">
+                <EdgeLayout bendX="0" bendY="0" textOffsetX="6" textOffsetY="-12"/>
+                <additionalLayout aktlength="200" force="10" preflength="200"/>
+            </Edge>
+            <Edge ID="I170" source="I157" target="I159" type="I70">
+                <EdgeLayout bendX="0" bendY="0" textOffsetX="-21" textOffsetY="-19"/>
+                <additionalLayout aktlength="200" force="10" preflength="200"/>
+            </Edge>
+            <Edge ID="I171" source="I154" target="I162" type="I77">
+                <EdgeLayout bendX="0" bendY="0" textOffsetX="1" textOffsetY="-15"/>
+                <additionalLayout aktlength="200" force="10" preflength="200"/>
+            </Edge>
+        </Graph>
+        <Graph ID="I172" kind="HOST" name="Usage">
+            <Node ID="I173" type="I27">
+                <NodeLayout X="105" Y="51"/>
+                <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+            </Node>
+            <Node ID="I175" type="I35">
+                <NodeLayout X="45" Y="125"/>
+                <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+            </Node>
+            <Node ID="I177" type="I8">
+                <NodeLayout X="153" Y="122"/>
+                <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+            </Node>
+            <Node ID="I179" type="I31">
+                <NodeLayout X="308" Y="55"/>
+                <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+            </Node>
+            <Node ID="I181" type="I8">
+                <NodeLayout X="256" Y="123"/>
+                <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+            </Node>
+            <Node ID="I183" type="I8">
+                <NodeLayout X="357" Y="124"/>
+                <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+            </Node>
+            <Node ID="I185" type="I12">
+                <Attribute constant="true" type="I14">
+                    <Value>
+                        <java class="java.beans.XMLDecoder" version="1.6.0_21">
+                            <string>myClass</string>
+                        </java>
+                    </Value>
+                </Attribute>
+                <NodeLayout X="938" Y="43"/>
+                <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+            </Node>
+            <Node ID="I188" type="I18">
+                <NodeLayout X="804" Y="157"/>
+                <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+            </Node>
+            <Node ID="I190" type="I18">
+                <NodeLayout X="867" Y="156"/>
+                <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+            </Node>
+            <Node ID="I192" type="I18">
+                <NodeLayout X="924" Y="153"/>
+                <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+            </Node>
+            <Node ID="I194" type="I15">
+                <NodeLayout X="978" Y="154"/>
+                <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+            </Node>
+            <Node ID="I196" type="I15">
+                <NodeLayout X="1027" Y="152"/>
+                <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+            </Node>
+            <Node ID="I198" type="I10">
+                <NodeLayout X="97" Y="200"/>
+                <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+            </Node>
+            <Node ID="I200" type="I8">
+                <NodeLayout X="46" Y="270"/>
+                <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+            </Node>
+            <Node ID="I202" type="I6">
+                <NodeLayout X="158" Y="267"/>
+                <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+            </Node>
+            <Node ID="I204" type="I6">
+                <NodeLayout X="239" Y="266"/>
+                <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+            </Node>
+            <Node ID="I206" type="I25">
+                <NodeLayout X="383" Y="217"/>
+                <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+            </Node>
+            <Node ID="I208" type="I37">
+                <NodeLayout X="383" Y="274"/>
+                <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+            </Node>
+            <Node ID="I210" type="I18">
+                <Attribute constant="true" type="I20">
+                    <Value>
+                        <java class="java.beans.XMLDecoder" version="1.6.0_21">
+                            <string>someMethod</string>
+                        </java>
+                    </Value>
+                </Attribute>
+                <NodeLayout X="1136" Y="55"/>
+                <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+            </Node>
+            <Node ID="I213" type="I6">
+                <NodeLayout X="1137" Y="121"/>
+                <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+            </Node>
+            <Node ID="I215" type="I6">
+                <NodeLayout X="1139" Y="179"/>
+                <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+            </Node>
+            <Node ID="I217" type="I6">
+                <NodeLayout X="1140" Y="229"/>
+                <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+            </Node>
+            <Node ID="I219" type="I6">
+                <NodeLayout X="1140" Y="283"/>
+                <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+            </Node>
+            <Node ID="I221" type="I55">
+                <Attribute constant="true" type="I57">
+                    <Value>
+                        <java class="java.beans.XMLDecoder" version="1.6.0_21">
+                            <string>aFormalParameter</string>
+                        </java>
+                    </Value>
+                </Attribute>
+                <NodeLayout X="1306" Y="127"/>
+                <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+            </Node>
+            <Node ID="I224" type="I55">
+                <Attribute constant="true" type="I57">
+                    <Value>
+                        <java class="java.beans.XMLDecoder" version="1.6.0_21">
+                            <string>anotherFormalParameter</string>
+                        </java>
+                    </Value>
+                </Attribute>
+                <NodeLayout X="1307" Y="192"/>
+                <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+            </Node>
+            <Node ID="I227" type="I29">
+                <NodeLayout X="110" Y="341"/>
+                <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+            </Node>
+            <Node ID="I229" type="I8">
+                <NodeLayout X="225" Y="410"/>
+                <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+            </Node>
+            <Node ID="I231" type="I58">
+                <NodeLayout X="457" Y="362"/>
+                <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+            </Node>
+            <Node ID="I233" type="I37">
+                <NodeLayout X="417" Y="429"/>
+                <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+            </Node>
+            <Node ID="I235" type="I37">
+                <NodeLayout X="496" Y="430"/>
+                <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+            </Node>
+            <Node ID="I237" type="I4">
+                <NodeLayout X="997" Y="304"/>
+                <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+            </Node>
+            <Node ID="I239" type="I12">
+                <NodeLayout X="942" Y="373"/>
+                <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+            </Node>
+            <Node ID="I241" type="I12">
+                <NodeLayout X="997" Y="374"/>
+                <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+            </Node>
+            <Node ID="I243" type="I12">
+                <NodeLayout X="1064" Y="373"/>
+                <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+            </Node>
+            <Node ID="I245" type="I37">
+                <NodeLayout X="29" Y="414"/>
+                <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+            </Node>
+            <Node ID="I247" type="I37">
+                <NodeLayout X="108" Y="411"/>
+                <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+            </Node>
+            <Node ID="I249" type="I37">
+                <NodeLayout X="107" Y="463"/>
+                <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+            </Node>
+            <Edge ID="I251" source="I173" target="I175" type="I72">
+                <EdgeLayout bendX="0" bendY="0" textOffsetX="-18" textOffsetY="-17"/>
+                <additionalLayout aktlength="200" force="10" preflength="200"/>
+            </Edge>
+            <Edge ID="I252" source="I173" target="I177" type="I73">
+                <EdgeLayout bendX="0" bendY="0" textOffsetX="4" textOffsetY="-17"/>
+                <additionalLayout aktlength="200" force="10" preflength="200"/>
+            </Edge>
+            <Edge ID="I253" source="I179" target="I181" type="I72">
+                <EdgeLayout bendX="0" bendY="0" textOffsetX="-21" textOffsetY="-15"/>
+                <additionalLayout aktlength="200" force="10" preflength="200"/>
+            </Edge>
+            <Edge ID="I254" source="I179" target="I183" type="I73">
+                <EdgeLayout bendX="0" bendY="0" textOffsetX="6" textOffsetY="-13"/>
+                <additionalLayout aktlength="200" force="10" preflength="200"/>
+            </Edge>
+            <Edge ID="I255" source="I185" target="I188" type="I70">
+                <EdgeLayout bendX="0" bendY="0" textOffsetX="0" textOffsetY="-22"/>
+                <additionalLayout aktlength="200" force="10" preflength="200"/>
+            </Edge>
+            <Edge ID="I256" source="I185" target="I190" type="I70">
+                <EdgeLayout bendX="0" bendY="0" textOffsetX="0" textOffsetY="-22"/>
+                <additionalLayout aktlength="200" force="10" preflength="200"/>
+            </Edge>
+            <Edge ID="I257" source="I185" target="I192" type="I70">
+                <EdgeLayout bendX="0" bendY="0" textOffsetX="0" textOffsetY="-22"/>
+                <additionalLayout aktlength="200" force="10" preflength="200"/>
+            </Edge>
+            <Edge ID="I258" source="I185" target="I194" type="I70">
+                <EdgeLayout bendX="0" bendY="0" textOffsetX="0" textOffsetY="-22"/>
+                <additionalLayout aktlength="200" force="10" preflength="200"/>
+            </Edge>
+            <Edge ID="I259" source="I185" target="I196" type="I70">
+                <EdgeLayout bendX="0" bendY="0" textOffsetX="0" textOffsetY="-22"/>
+                <additionalLayout aktlength="200" force="10" preflength="200"/>
+            </Edge>
+            <Edge ID="I260" source="I198" target="I200" type="I76">
+                <EdgeLayout bendX="0" bendY="0" textOffsetX="-29" textOffsetY="-11"/>
+                <additionalLayout aktlength="200" force="10" preflength="200"/>
+            </Edge>
+            <Edge ID="I261" source="I198" target="I202" type="I74">
+                <EdgeLayout bendX="0" bendY="0" textOffsetX="-17" textOffsetY="-8"/>
+                <additionalLayout aktlength="200" force="10" preflength="200"/>
+            </Edge>
+            <Edge ID="I262" source="I198" target="I204" type="I75">
+                <EdgeLayout bendX="0" bendY="0" textOffsetX="1" textOffsetY="-5"/>
+                <additionalLayout aktlength="200" force="10" preflength="200"/>
+            </Edge>
+            <Edge ID="I263" source="I206" target="I208" type="I70">
+                <EdgeLayout bendX="0" bendY="0" textOffsetX="7" textOffsetY="-12"/>
+                <additionalLayout aktlength="200" force="10" preflength="200"/>
+            </Edge>
+            <Edge ID="I264" source="I210" target="I213" type="I71">
+                <EdgeLayout bendX="0" bendY="0" textOffsetX="6" textOffsetY="-6"/>
+                <additionalLayout aktlength="200" force="10" preflength="200"/>
+            </Edge>
+            <Edge ID="I265" source="I213" target="I215" type="I71">
+                <EdgeLayout bendX="0" bendY="0" textOffsetX="7" textOffsetY="-11"/>
+                <additionalLayout aktlength="200" force="10" preflength="200"/>
+            </Edge>
+            <Edge ID="I266" source="I215" target="I217" type="I71">
+                <EdgeLayout bendX="0" bendY="0" textOffsetX="9" textOffsetY="-8"/>
+                <additionalLayout aktlength="200" force="10" preflength="200"/>
+            </Edge>
+            <Edge ID="I267" source="I217" target="I219" type="I71">
+                <EdgeLayout bendX="0" bendY="0" textOffsetX="6" textOffsetY="-9"/>
+                <additionalLayout aktlength="200" force="10" preflength="200"/>
+            </Edge>
+            <Edge ID="I268" source="I210" target="I221" type="I77">
+                <EdgeLayout bendX="0" bendY="0" textOffsetX="1048" textOffsetY="-310"/>
+                <additionalLayout aktlength="200" force="10" preflength="200"/>
+            </Edge>
+            <Edge ID="I269" source="I221" target="I224" type="I77">
+                <EdgeLayout bendX="0" bendY="0" textOffsetX="4" textOffsetY="-14"/>
+                <additionalLayout aktlength="200" force="10" preflength="200"/>
+            </Edge>
+            <Edge ID="I270" source="I231" target="I233" type="I72">
+                <EdgeLayout bendX="0" bendY="0" textOffsetX="0" textOffsetY="-22"/>
+                <additionalLayout aktlength="200" force="10" preflength="200"/>
+            </Edge>
+            <Edge ID="I271" source="I231" target="I235" type="I73">
+                <EdgeLayout bendX="0" bendY="0" textOffsetX="0" textOffsetY="-22"/>
+                <additionalLayout aktlength="200" force="10" preflength="200"/>
+            </Edge>
+            <Edge ID="I272" source="I237" target="I239" type="I70">
+                <EdgeLayout bendX="0" bendY="0" textOffsetX="0" textOffsetY="-22"/>
+                <additionalLayout aktlength="200" force="10" preflength="200"/>
+            </Edge>
+            <Edge ID="I273" source="I237" target="I241" type="I70">
+                <EdgeLayout bendX="0" bendY="0" textOffsetX="0" textOffsetY="-22"/>
+                <additionalLayout aktlength="200" force="10" preflength="200"/>
+            </Edge>
+            <Edge ID="I274" source="I237" target="I243" type="I70">
+                <EdgeLayout bendX="0" bendY="0" textOffsetX="0" textOffsetY="-22"/>
+                <additionalLayout aktlength="200" force="10" preflength="200"/>
+            </Edge>
+            <Edge ID="I275" source="I227" target="I245" type="I78">
+                <EdgeLayout bendX="0" bendY="0" textOffsetX="-43" textOffsetY="-14"/>
+                <additionalLayout aktlength="200" force="10" preflength="200"/>
+            </Edge>
+            <Edge ID="I276" source="I227" target="I247" type="I79">
+                <EdgeLayout bendX="0" bendY="0" textOffsetX="13" textOffsetY="-10"/>
+                <additionalLayout aktlength="200" force="10" preflength="200"/>
+            </Edge>
+            <Edge ID="I277" source="I247" target="I229" type="I77">
+                <EdgeLayout bendX="0" bendY="0" textOffsetX="-19" textOffsetY="-26"/>
+                <additionalLayout aktlength="200" force="10" preflength="200"/>
+            </Edge>
+            <Edge ID="I278" source="I247" target="I249" type="I79">
+                <EdgeLayout bendX="0" bendY="0" textOffsetX="3" textOffsetY="-13"/>
+                <additionalLayout aktlength="200" force="10" preflength="200"/>
+            </Edge>
+        </Graph>
+        <Rule ID="I279" name="program">
+            <Graph ID="I281" kind="LHS" name="LeftOf_program">
+                <Node ID="I282" type="I4">
+                    <NodeLayout X="140" Y="177"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+            </Graph>
+            <Graph ID="I284" kind="RHS" name="RightOf_program">
+                <Node ID="I285" type="I60">
+                    <NodeLayout X="369" Y="171"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Node ID="I286" type="I65">
+                    <Attribute constant="true" type="I67">
+                        <Value>
+                            <java class="java.beans.XMLDecoder" version="1.6.0_21">
+                                <string>main</string>
+                            </java>
+                        </Value>
+                    </Attribute>
+                    <Attribute constant="true" type="I68">
+                        <Value>
+                            <string>null</string>
+                        </Value>
+                    </Attribute>
+                    <Attribute constant="true" type="I69">
+                        <Value>
+                            <string>null</string>
+                        </Value>
+                    </Attribute>
+                    <NodeLayout X="113" Y="173"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Edge ID="I291" source="I285" target="I286" type="I84">
+                    <EdgeLayout bendX="246" bendY="201"
+                        textOffsetX="-18" textOffsetY="4"/>
+                    <additionalLayout aktlength="202" force="10" preflength="200"/>
+                </Edge>
+                <Edge ID="I292" source="I285" target="I286" type="I89">
+                    <EdgeLayout bendX="0" bendY="0" textOffsetX="0" textOffsetY="-22"/>
+                    <additionalLayout aktlength="202" force="10" preflength="200"/>
+                </Edge>
+            </Graph>
+            <Morphism name="program"/>
+            <TaggedValue Tag="layer" TagValue="0"/>
+            <TaggedValue Tag="priority" TagValue="0"/>
+        </Rule>
+        <Rule ID="I293" name="class">
+            <Parameter name="x" type="String"/>
+            <Graph ID="I295" kind="LHS" name="LeftOf_class">
+                <Node ID="I296" type="I12">
+                    <Attribute type="I14" variable="true">
+                        <Value>
+                            <string>x</string>
+                        </Value>
+                    </Attribute>
+                    <NodeLayout X="243" Y="169"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Node ID="I299" type="I60">
+                    <NodeLayout X="242" Y="56"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+            </Graph>
+            <Graph ID="I300" kind="RHS" name="RightOf_class">
+                <Node ID="I301" type="I60">
+                    <NodeLayout X="215" Y="51"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Node ID="I302" type="I12">
+                    <Attribute type="I14" variable="true">
+                        <Value>
+                            <string>x</string>
+                        </Value>
+                    </Attribute>
+                    <NodeLayout X="143" Y="155"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Node ID="I305" type="I61">
+                    <Attribute type="I63" variable="true">
+                        <Value>
+                            <string>x</string>
+                        </Value>
+                    </Attribute>
+                    <Attribute type="I64">
+                        <Value>
+                            <java class="java.beans.XMLDecoder" version="1.6.0_21">
+                                <string>new MsgBodyMap("")</string>
+                            </java>
+                        </Value>
+                    </Attribute>
+                    <NodeLayout X="305" Y="154"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Node ID="I309" type="I61">
+                    <Attribute type="I63">
+                        <Value>
+                            <java class="java.beans.XMLDecoder" version="1.6.0_21">
+                                <string>new String(x+"_obj")</string>
+                            </java>
+                        </Value>
+                    </Attribute>
+                    <Attribute type="I64">
+                        <Value>
+                            <java class="java.beans.XMLDecoder" version="1.6.0_21">
+                                <string>new MsgBodyMap("")</string>
+                            </java>
+                        </Value>
+                    </Attribute>
+                    <NodeLayout X="305" Y="232"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Edge ID="I313" source="I302" target="I302" type="I80">
+                    <EdgeLayout bendX="103" bendY="122" loopH="20"
+                        loopW="20" textOffsetX="0" textOffsetY="-22"/>
+                    <additionalLayout aktlength="200" force="10" preflength="200"/>
+                </Edge>
+                <Edge ID="I314" source="I301" target="I305" type="I81">
+                    <EdgeLayout bendX="0" bendY="0" textOffsetX="0" textOffsetY="-22"/>
+                    <additionalLayout aktlength="200" force="10" preflength="200"/>
+                </Edge>
+                <Edge ID="I315" source="I305" target="I309" type="I82">
+                    <EdgeLayout bendX="0" bendY="0" textOffsetX="10" textOffsetY="-10"/>
+                    <additionalLayout aktlength="200" force="10" preflength="200"/>
+                </Edge>
+            </Graph>
+            <Morphism name="class">
+                <Mapping image="I301" orig="I299"/>
+                <Mapping image="I302" orig="I296"/>
+            </Morphism>
+            <ApplCondition>
+                <NAC>
+                    <Graph ID="I316" kind="NAC" name="Nac">
+                        <Node ID="I317" type="I12">
+                            <Attribute type="I14" variable="true">
+                                <Value>
+                                    <string>x</string>
+                                </Value>
+                            </Attribute>
+                            <NodeLayout X="102" Y="176"/>
+                            <additionalLayout age="0" force="10"
+                                frozen="false" zone="50"/>
+                        </Node>
+                        <Edge ID="I320" source="I317" target="I317" type="I80">
+                            <EdgeLayout bendX="62" bendY="143"
+                                loopH="20" loopW="20" textOffsetX="0" textOffsetY="-22"/>
+                            <additionalLayout aktlength="200" force="10" preflength="200"/>
+                        </Edge>
+                    </Graph>
+                    <Morphism name="Nac">
+                        <Mapping image="I317" orig="I296"/>
+                    </Morphism>
+                </NAC>
+            </ApplCondition>
+            <TaggedValue Tag="layer" TagValue="0"/>
+            <TaggedValue Tag="priority" TagValue="0"/>
+        </Rule>
+        <Rule ID="I321" name="field">
+            <Parameter name="x" type="String"/>
+            <Parameter name="y" type="String"/>
+            <Parameter name="z" type="MsgBodyMap"/>
+            <Graph ID="I323" kind="LHS" name="Left">
+                <Node ID="I324" type="I12">
+                    <Attribute type="I14" variable="true">
+                        <Value>
+                            <string>x</string>
+                        </Value>
+                    </Attribute>
+                    <NodeLayout X="210" Y="100"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Node ID="I327" type="I15">
+                    <Attribute type="I17" variable="true">
+                        <Value>
+                            <string>y</string>
+                        </Value>
+                    </Attribute>
+                    <NodeLayout X="210" Y="175"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Node ID="I330" type="I61">
+                    <Attribute type="I63" variable="true">
+                        <Value>
+                            <string>x</string>
+                        </Value>
+                    </Attribute>
+                    <NodeLayout X="341" Y="103"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Node ID="I333" type="I61">
+                    <Attribute type="I64" variable="true">
+                        <Value>
+                            <string>z</string>
+                        </Value>
+                    </Attribute>
+                    <NodeLayout X="341" Y="180"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Edge ID="I336" source="I324" target="I324" type="I80">
+                    <EdgeLayout bendX="170" bendY="67" loopH="20"
+                        loopW="20" textOffsetX="0" textOffsetY="-22"/>
+                    <additionalLayout aktlength="200" force="10" preflength="200"/>
+                </Edge>
+                <Edge ID="I337" source="I324" target="I327" type="I70">
+                    <EdgeLayout bendX="0" bendY="0" textOffsetX="9" textOffsetY="-14"/>
+                    <additionalLayout aktlength="200" force="10" preflength="200"/>
+                </Edge>
+                <Edge ID="I338" source="I330" target="I333" type="I82">
+                    <EdgeLayout bendX="0" bendY="0" textOffsetX="6" textOffsetY="-12"/>
+                    <additionalLayout aktlength="200" force="10" preflength="200"/>
+                </Edge>
+            </Graph>
+            <Graph ID="I339" kind="RHS" name="Right">
+                <Node ID="I340" type="I12">
+                    <Attribute type="I14" variable="true">
+                        <Value>
+                            <string>x</string>
+                        </Value>
+                    </Attribute>
+                    <NodeLayout X="210" Y="100"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Node ID="I343" type="I61">
+                    <Attribute type="I63" variable="true">
+                        <Value>
+                            <string>x</string>
+                        </Value>
+                    </Attribute>
+                    <NodeLayout X="372" Y="99"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Node ID="I346" type="I61">
+                    <Attribute type="I64">
+                        <Value>
+                            <java class="java.beans.XMLDecoder" version="1.6.0_21">
+                                <string>z.set(y,new Statement(""))</string>
+                            </java>
+                        </Value>
+                    </Attribute>
+                    <NodeLayout X="372" Y="188"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Edge ID="I349" source="I340" target="I340" type="I80">
+                    <EdgeLayout bendX="170" bendY="67" loopH="20"
+                        loopW="20" textOffsetX="0" textOffsetY="-22"/>
+                    <additionalLayout aktlength="200" force="10" preflength="200"/>
+                </Edge>
+                <Edge ID="I350" source="I343" target="I346" type="I82">
+                    <EdgeLayout bendX="0" bendY="0" textOffsetX="6" textOffsetY="-12"/>
+                    <additionalLayout aktlength="200" force="10" preflength="200"/>
+                </Edge>
+            </Graph>
+            <Morphism name="field">
+                <Mapping image="I340" orig="I324"/>
+                <Mapping image="I349" orig="I336"/>
+                <Mapping image="I343" orig="I330"/>
+                <Mapping image="I346" orig="I333"/>
+                <Mapping image="I350" orig="I338"/>
+            </Morphism>
+            <TaggedValue Tag="layer" TagValue="0"/>
+            <TaggedValue Tag="priority" TagValue="0"/>
+        </Rule>
+        <Rule ID="I351" name="method">
+            <Parameter name="x" type="String"/>
+            <Parameter name="y" type="String"/>
+            <Parameter name="z" type="MsgBodyMap"/>
+            <Graph ID="I353" kind="LHS" name="Left">
+                <Node ID="I354" type="I12">
+                    <Attribute type="I14" variable="true">
+                        <Value>
+                            <string>x</string>
+                        </Value>
+                    </Attribute>
+                    <NodeLayout X="208" Y="84"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Node ID="I357" type="I18">
+                    <Attribute type="I20" variable="true">
+                        <Value>
+                            <string>y</string>
+                        </Value>
+                    </Attribute>
+                    <NodeLayout X="208" Y="157"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Node ID="I360" type="I61">
+                    <Attribute type="I63" variable="true">
+                        <Value>
+                            <string>x</string>
+                        </Value>
+                    </Attribute>
+                    <NodeLayout X="334" Y="89"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Node ID="I363" type="I61">
+                    <Attribute type="I64" variable="true">
+                        <Value>
+                            <string>z</string>
+                        </Value>
+                    </Attribute>
+                    <NodeLayout X="334" Y="163"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Edge ID="I366" source="I354" target="I357" type="I70">
+                    <EdgeLayout bendX="0" bendY="0" textOffsetX="6" textOffsetY="-11"/>
+                    <additionalLayout aktlength="200" force="10" preflength="200"/>
+                </Edge>
+                <Edge ID="I367" source="I354" target="I354" type="I80">
+                    <EdgeLayout bendX="168" bendY="51" loopH="20"
+                        loopW="20" textOffsetX="0" textOffsetY="-22"/>
+                    <additionalLayout aktlength="200" force="10" preflength="200"/>
+                </Edge>
+                <Edge ID="I368" source="I360" target="I363" type="I82">
+                    <EdgeLayout bendX="0" bendY="0" textOffsetX="9" textOffsetY="-10"/>
+                    <additionalLayout aktlength="200" force="10" preflength="200"/>
+                </Edge>
+            </Graph>
+            <Graph ID="I369" kind="RHS" name="Right">
+                <Node ID="I370" type="I12">
+                    <Attribute type="I14" variable="true">
+                        <Value>
+                            <string>x</string>
+                        </Value>
+                    </Attribute>
+                    <NodeLayout X="208" Y="84"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Node ID="I373" type="I18">
+                    <NodeLayout X="208" Y="150"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Node ID="I375" type="I61">
+                    <Attribute type="I63" variable="true">
+                        <Value>
+                            <string>x</string>
+                        </Value>
+                    </Attribute>
+                    <NodeLayout X="367" Y="87"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Node ID="I378" type="I61">
+                    <Attribute type="I64">
+                        <Value>
+                            <java class="java.beans.XMLDecoder" version="1.6.0_21">
+                                <string>z.set(y,new Statement(""))</string>
+                            </java>
+                        </Value>
+                    </Attribute>
+                    <NodeLayout X="368" Y="162"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Edge ID="I381" source="I370" target="I373" type="I70">
+                    <EdgeLayout bendX="0" bendY="0" textOffsetX="6" textOffsetY="-11"/>
+                    <additionalLayout aktlength="200" force="10" preflength="200"/>
+                </Edge>
+                <Edge ID="I382" source="I370" target="I370" type="I80">
+                    <EdgeLayout bendX="168" bendY="51" loopH="20"
+                        loopW="20" textOffsetX="0" textOffsetY="-22"/>
+                    <additionalLayout aktlength="200" force="10" preflength="200"/>
+                </Edge>
+                <Edge ID="I383" source="I375" target="I378" type="I82">
+                    <EdgeLayout bendX="0" bendY="0" textOffsetX="10" textOffsetY="-8"/>
+                    <additionalLayout aktlength="200" force="10" preflength="200"/>
+                </Edge>
+                <Edge ID="I384" source="I373" target="I373" type="I80">
+                    <EdgeLayout bendX="165" bendY="125" loopH="20"
+                        loopW="20" textOffsetX="0" textOffsetY="-22"/>
+                    <additionalLayout aktlength="200" force="10" preflength="200"/>
+                </Edge>
+            </Graph>
+            <Morphism name="method">
+                <Mapping image="I370" orig="I354"/>
+                <Mapping image="I373" orig="I357"/>
+                <Mapping image="I381" orig="I366"/>
+                <Mapping image="I382" orig="I367"/>
+                <Mapping image="I375" orig="I360"/>
+                <Mapping image="I378" orig="I363"/>
+                <Mapping image="I383" orig="I368"/>
+            </Morphism>
+            <TaggedValue Tag="layer" TagValue="0"/>
+            <TaggedValue Tag="priority" TagValue="0"/>
+        </Rule>
+        <Rule ID="I385" name="method_clone">
+            <Parameter name="x" type="String"/>
+            <Parameter name="y" type="String"/>
+            <Parameter name="z" type="MsgBodyMap"/>
+            <Graph ID="I387" kind="LHS" name="Left">
+                <Node ID="I388" type="I12">
+                    <Attribute type="I14" variable="true">
+                        <Value>
+                            <string>x</string>
+                        </Value>
+                    </Attribute>
+                    <NodeLayout X="208" Y="84"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Node ID="I391" type="I18">
+                    <Attribute type="I20" variable="true">
+                        <Value>
+                            <string>y</string>
+                        </Value>
+                    </Attribute>
+                    <NodeLayout X="208" Y="157"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Node ID="I394" type="I61">
+                    <Attribute type="I63" variable="true">
+                        <Value>
+                            <string>x</string>
+                        </Value>
+                    </Attribute>
+                    <NodeLayout X="334" Y="89"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Node ID="I397" type="I61">
+                    <Attribute type="I64" variable="true">
+                        <Value>
+                            <string>z</string>
+                        </Value>
+                    </Attribute>
+                    <NodeLayout X="334" Y="163"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Edge ID="I400" source="I388" target="I391" type="I70">
+                    <EdgeLayout bendX="0" bendY="0" textOffsetX="6" textOffsetY="-11"/>
+                    <additionalLayout aktlength="200" force="10" preflength="200"/>
+                </Edge>
+                <Edge ID="I401" source="I388" target="I388" type="I80">
+                    <EdgeLayout bendX="168" bendY="51" loopH="20"
+                        loopW="20" textOffsetX="0" textOffsetY="-22"/>
+                    <additionalLayout aktlength="200" force="10" preflength="200"/>
+                </Edge>
+                <Edge ID="I402" source="I394" target="I397" type="I82">
+                    <EdgeLayout bendX="0" bendY="0" textOffsetX="9" textOffsetY="-10"/>
+                    <additionalLayout aktlength="200" force="10" preflength="200"/>
+                </Edge>
+            </Graph>
+            <Graph ID="I403" kind="RHS" name="Right">
+                <Node ID="I404" type="I12">
+                    <Attribute type="I14" variable="true">
+                        <Value>
+                            <string>x</string>
+                        </Value>
+                    </Attribute>
+                    <NodeLayout X="208" Y="84"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Node ID="I407" type="I18">
+                    <NodeLayout X="208" Y="150"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Node ID="I409" type="I61">
+                    <Attribute type="I63" variable="true">
+                        <Value>
+                            <string>x</string>
+                        </Value>
+                    </Attribute>
+                    <NodeLayout X="367" Y="87"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Node ID="I412" type="I61">
+                    <Attribute type="I64">
+                        <Value>
+                            <java class="java.beans.XMLDecoder" version="1.6.0_21">
+                                <string>z.set(y,new Statement(""))</string>
+                            </java>
+                        </Value>
+                    </Attribute>
+                    <NodeLayout X="368" Y="162"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+                <Edge ID="I415" source="I404" target="I407" type="I70">
+                    <EdgeLayout bendX="0" bendY="0" textOffsetX="6" textOffsetY="-11"/>
+                    <additionalLayout aktlength="200" force="10" preflength="200"/>
+                </Edge>
+                <Edge ID="I416" source="I404" target="I404" type="I80">
+                    <EdgeLayout bendX="168" bendY="51" loopH="20"
+                        loopW="20" textOffsetX="0" textOffsetY="-22"/>
+                    <additionalLayout aktlength="200" force="10" preflength="200"/>
+                </Edge>
+                <Edge ID="I417" source="I409" target="I412" type="I82">
+                    <EdgeLayout bendX="0" bendY="0" textOffsetX="10" textOffsetY="-8"/>
+                    <additionalLayout aktlength="200" force="10" preflength="200"/>
+                </Edge>
+                <Edge ID="I418" source="I407" target="I407" type="I80">
+                    <EdgeLayout bendX="165" bendY="125" loopH="20"
+                        loopW="20" textOffsetX="0" textOffsetY="-22"/>
+                    <additionalLayout aktlength="200" force="10" preflength="200"/>
+                </Edge>
+            </Graph>
+            <Morphism name="method_clone">
+                <Mapping image="I404" orig="I388"/>
+                <Mapping image="I407" orig="I391"/>
+                <Mapping image="I409" orig="I394"/>
+                <Mapping image="I412" orig="I397"/>
+                <Mapping image="I415" orig="I400"/>
+                <Mapping image="I416" orig="I401"/>
+                <Mapping image="I417" orig="I402"/>
+            </Morphism>
+            <TaggedValue Tag="layer" TagValue="0"/>
+            <TaggedValue Tag="priority" TagValue="0"/>
+        </Rule>
+    </GraphTransformationSystem>
+</Document>

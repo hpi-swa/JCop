@@ -1,0 +1,179 @@
+aspect ContextConstraint {
+  	//inh boolean DLALayerActivation.reachable();
+    //inh boolean LayerActivationBlock.reachable();
+  	//inh boolean DeclarativeLayerActivation.reachable();
+//  	eq DeclarativeLayerActivation.getLayerActivationBlock().reachable() = true;
+  	eq ContextConstraint.getLayerActivationBlock().reachable() = true;
+	//eq LayerActivationBlock.reachable() = true;
+	//eq DeclarativeLayerActivation.isStatic() = true;
+	
+	
+	eq DLALayerActivation.getArg().nameType() = NameType.EXPRESSION_NAME;
+	
+	
+	public void ExecutionPointcutExpr.toString(StringBuffer s) {
+    	s.append("execution(");
+    	getPattern().toString(s);
+    	s.append(")");
+    } 
+	
+	
+    public void ModifierPattern.toString(StringBuffer s) {    	
+    	getModifier().toString(s);
+    }
+    
+	public void ExplicitTypeNamePattern.toString(StringBuffer s) {
+    	getAccess().toString(s);
+    }
+	
+	public void WildcardFormalPattern.toString(StringBuffer s) {
+		s.append("..");	
+    }
+	
+	public void SimpleNamePattern.toString(StringBuffer s) {
+		s.append(getPattern());	
+	}
+	
+	public void AndPointcutExpr.toString(StringBuffer s) {
+		s.append("(");
+		getLhs().toString(s);
+		s.append(" && ");
+		getRhs().toString(s);
+		s.append(")");	
+	}
+	
+	public void OrPointcutExpr.toString(StringBuffer s) {
+		s.append("(");
+		getLhs().toString(s);
+		s.append(" || ");
+		getRhs().toString(s);
+		s.append(")");	
+	}
+	
+	public void DotNamePattern.toString(StringBuffer s) {
+		getLhs().toString(s);
+		s.append(".");
+		getRhs().toString(s);	
+	}
+
+	public void DotDotNamePattern.toString(StringBuffer s) {
+		getLhs().toString(s);
+		s.append("..");
+		getRhs().toString(s);	
+	}
+	
+	public void DotDotBindingPattern.toString(StringBuffer s) {		
+		s.append("..");		
+	}
+	
+	 public void CallPointcutExpr.toString(StringBuffer s) {
+    	s.append("call(");
+    	getPattern().toString(s);
+    	s.append(")");
+    }
+	
+	public void CflowPointcutExpr.toString(StringBuffer s) {
+    	s.append("cflow(");
+    	getPointcut().toString(s);
+    	s.append(")");
+    }
+	
+	public void CflowBelowPointcutExpr.toString(StringBuffer s) {
+    	s.append("cflowbelow(");
+    	getPointcut().toString(s);
+    	s.append(")");
+    }
+	
+	public void NegPointcutExpr.toString(StringBuffer s) {
+    	s.append("!");
+    	getPointcutExpr().toString(s);
+    }
+	
+	public void NegPattern.toString(StringBuffer s) {
+    	s.append("!");
+    	getPattern().toString(s);
+    }
+    
+    public void IfPointcutExpr.toString(StringBuffer s) {
+		s.append("(if ( ");
+		// malte: evaluating the real expression causes exceptions
+		// since the three has not been completely constructed at this time 		  
+		s.append("true");//getExprNoTransform().toString(s);		
+		s.append(") && call(@jcop.lang.LayeredMethod * *.*(..)))");
+	}
+		
+	
+	
+	public void WithinPointcutExpr.toString(StringBuffer s) {
+    	s.append("within(");
+    	getPattern().toString(s);
+    	s.append(")");
+    }
+    
+	public void WithinCodePointcutExpr.toString(StringBuffer s) {
+    	s.append("withincode(");
+    	getPattern().toString(s);
+    	s.append(")");
+    }
+	
+	public void MethodPattern.toString(StringBuffer s) {
+ 		for (ModifierPattern modifierPattern : getModifierPatterns()) {
+			modifierPattern.toString(s);
+ 			s.append(" ");
+		}
+ 		s.append(" ");
+ 		getReturnTypePattern().toString(s);
+ 		s.append(" ");
+ 		getMemberNamePattern().toString(s);
+ 		s.append("(");
+ 		for (int i = 0; i < getFormalPatterns().getNumChild(); i++) {
+ 			FormalPattern formalPattern =  getFormalPatterns().getChild(i);
+ 			if (i > 0) s.append(" ");
+ 			formalPattern.toString(s); 	 			
+		}
+ 		 s.append(")");
+     }
+	 
+	public void ParseName.toString(StringBuffer s) {	
+		s.append(getID());
+	}
+	 
+ /* rewrite DeclarativeLayerActivation {
+     to EmptyStmt {
+	 jcop.JCopAspect.getInstance().addLayerActivationStatement(this);
+	 return new EmptyStmt(); 
+    }
+  } */     		 
+
+
+   public void LayerActivationBlock.toString(StringBuffer s) {
+      s.append("{ \n");
+	  indent++;
+	  for (DLALayerActivation dla : getDLALayerActivations()) {
+	     dla.toString(s);
+	  }
+	  indent--;
+	  s.append(indent() + "} \n");
+   }
+
+   public void DLALayerActivation.toString(StringBuffer s) {
+	  if (getActivation())
+	     s.append("with");
+	  else
+		 s.append("without");
+	  s.append(" (");
+	  for (Expr arg : getArgs()) {
+		s.append(arg);
+		s.append(", ");	
+	  }
+	  if(getNumArg() > 0)
+		s.deleteCharAt(s.length()-1);
+	  s.append(") ;");
+   }
+  
+   public void ContextConstraint.toString(StringBuffer s) {
+	  getConstraintDefinition().toString(s);	
+	  getLayerActivationBlock().toString(s);	
+   }
+}
+

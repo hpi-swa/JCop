@@ -1,0 +1,10 @@
+aspect ObjectSpecificLayerActivation {  
+   rewrite ObjectSpecificLayerActivation {
+      to ASTNode {
+	  	if (Program.hasOption(jcop.Globals.CompilerOps.xmlOutlinePath)) 
+			return super.rewriteTo();
+		else
+			return new jcop.transformation.ImplicitLayerActivationTransformer(this).errorCheckAndTransform(hostType().compilationUnit());
+     }
+   }	
+}

@@ -1,0 +1,146 @@
+/* MA, 2009-07-30_15-22
+ * Patch for .jcop files
+ * Not nice, but necessary since JastAdd does not support method refinement of methods, whose
+ * classes are defined within an jrag aspect. Thus, it is not possible to refine 
+ * FolderPart.hasCompilationUnit and FolderPart.selectCompilationUnit
+ * but necessary to introduce *_JCOP copies of these methods. 
+ */
+aspect JCopFileSupport {  
+  
+
+    private String Program.parseClassPath(String path, String extension) {
+	 path = path.replaceAll("\\.", "\\" + File.separator);
+      
+	  if(path.contains(":") /*&& Program.hasValueForOption(jcop.Globals.CompilerOps.rootDir)*/) 
+		  path = /*Program.getValueForOption(jcop.Globals.CompilerOps.rootDir) + "\\" +*/ path;
+	  else if(Program.hasValueForOption(jcop.Globals.CompilerOps.sourcepath))
+		  path = Program.getValueForOption(jcop.Globals.CompilerOps.sourcepath) + File.separator + path;
+	  else
+		  path = System.getProperty("user.dir") + File.separator + path;	  
+	  
+	  String jcopVersion = path + jcop.Globals.fileExtension;
+	  String javaVersion = path + ".java";
+	  if(new File(jcopVersion).exists())
+		return jcopVersion;	  
+	  if(new File(javaVersion).exists())
+		  return javaVersion;
+	  
+	  return javaVersion;
+  }  
+   
+ private void Program.addFilesTo(HashSet files, String arg) {
+		//remove the old file representation	 
+	    final String extension = jcop.Globals.fileExtension;	
+		files.remove(arg);	    
+		arg = parseClassPath(arg, extension);
+		File[] sourceFiles = parseFiles(arg, extension);
+	
+		for (File currentFile : sourceFiles) 
+			files.add(currentFile.getAbsolutePath());	
+		if (hasValueForOption(jcop.Globals.CompilerOps.layerpath)) 
+			addUnreferencedLayers(files);			
+	} 
+ 
+  private File[] Program.parseFiles(String arg, String extension){
+	  String wildcardPattern = "*" + extension; 
+	  if (arg.endsWith(wildcardPattern))  
+	 	  return parseMultipleFiles(arg, extension);	  
+	  else 
+		  return new File[]{ new File(arg)};	  	  			  
+  }
+  
+  private void Program.addUnreferencedLayers(HashSet files) {
+  	// currently only support for one dir:		
+		jcop.compiler.filecopy.LayerFolderLookup lookup 
+			= new jcop.compiler.filecopy.LayerFolderLookup();		
+		for (File file : lookup.getCompilationUnits()) 
+			files.add(file.getAbsolutePath());		
+  }
+  
+  private File[] Program.parseMultipleFiles(String path, final String extension) {
+	  String wildcardPattern = "*" + extension;
+	  String folderPath = path.substring(0, path.lastIndexOf(wildcardPattern));	  	   
+	  File folder = new File(folderPath);
+	  return folder.listFiles(
+		 new FileFilter() {
+			public boolean accept(File pathname) {
+				return pathname.getName().endsWith(extension);
+			}
+	  });
+  }
+  
+  refine Options public void Program.addOptions(String[] args) {
+	    files = new LinkedHashSet(files);
+	    for(int i = 0; i < args.length; i++) {
+	      String arg = args[i];
+	      if(arg.startsWith("@")) {
+	        try {
+	          String fileName = arg.substring(1,arg.length());
+	          java.io.StreamTokenizer tokenizer = new java.io.StreamTokenizer(new java.io.FileReader(fileName));
+	          tokenizer.resetSyntax();
+	          tokenizer.whitespaceChars(' ',' ');
+	          tokenizer.whitespaceChars('\t','\t');
+	          tokenizer.whitespaceChars('\f','\f');
+	          tokenizer.whitespaceChars('\n','\n');
+	          tokenizer.whitespaceChars('\r','\r');
+	          tokenizer.wordChars(33,255);
+	          ArrayList list = new ArrayList();
+	          int next = tokenizer.nextToken();
+	          while(next != java.io.StreamTokenizer.TT_EOF) {
+	            if(next == java.io.StreamTokenizer.TT_WORD) {
+	              list.add(tokenizer.sval);
+	            }
+	            next = tokenizer.nextToken();
+	          }
+	          String[] newArgs = new String[list.size()];
+	          int index = 0;
+	          for(Iterator iter = list.iterator(); iter.hasNext(); index++) {
+	            newArgs[index] = (String)iter.next();
+	          }
+	          addOptions(newArgs);
+	        } catch (java.io.IOException e) {
+	        }
+	      }
+	      else if(arg.startsWith("-")) {
+	        if(!optionDescriptions.containsKey(arg))
+	          throw new Error("Command line argument error: option " + arg + " is not defined");
+	        Option o = (Option)optionDescriptions.get(arg);
+	        
+	        if(!o.isCollection && options.containsKey(arg))
+	          throw new Error("Command line argument error: option " + arg + " is multiply defined");
+	        
+	        if(o.hasValue && !o.isCollection) {
+	          String value = null;
+	          if(i + 1 > args.length - 1)
+	            throw new Error("Command line argument error: value missing for key " + arg);
+	          value = args[i+1];
+	          if(value.startsWith("-"))
+	            throw new Error("Command line argument error: value missing for key " + arg);
+	          i++;
+	          options.put(arg, value);
+	        }
+	        else if(o.hasValue && o.isCollection) {
+	          String value = null;
+	          if(i + 1 > args.length - 1)
+	            throw new Error("Command line argument error: value missing for key " + arg);
+	          value = args[i+1];
+	          if(value.startsWith("-"))
+	            throw new Error("Command line argument error: value missing for key " + arg);
+	          i++;
+	          Collection c = (Collection)options.get(arg);
+	          if(c == null)
+	            c = new ArrayList();
+	          c.add(value);
+	          options.put(arg, c);
+	        }
+	        else {
+	          options.put(arg, null);
+	        }
+	      }
+	      else {
+	        files.add(arg);
+	        addFilesTo(files, arg);
+	      }
+	    }
+	  }
+}

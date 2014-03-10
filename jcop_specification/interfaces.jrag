@@ -1,0 +1,33 @@
+aspect Interfaces {
+	  interface Typed {		    
+		    public TypeDecl type();	    
+		    public TypeDecl hostType();
+      }
+	  VariableDeclaration implements Typed;
+	  ParameterDeclaration implements Typed;
+	  Access implements Typed;
+	  
+	  interface LayerDeclaration {
+		  public String getID();
+		  public TypeDecl hostType();
+		  public ClassDecl hostLayer();
+		  public List<BodyDecl> getBodyDecls();
+		  public String getFullQualifiedName();
+	  }
+	  LayerDecl implements LayerDeclaration;
+	  
+	  // uncomment later...
+	  OpenLayerDecl implements LayerDeclaration;
+	  
+	  
+	  interface NamedMember {		    
+		    public TypeDecl type();
+		    public Modifiers getModifiersNoTransform();
+		    public Modifiers getModifiers();
+		    public String getID();		    
+	  }
+	  MethodDecl implements NamedMember;
+	  FieldDeclaration implements NamedMember; 
+	  
+	  
+}

@@ -1,0 +1,25 @@
+aspect ProceedExpr {
+   syn TypeDecl ProceedExpr.type() = ((MethodDecl)enclosingBodyDecl()).type();  
+   
+   rewrite ProceedExpr {
+      to ASTNode {
+    	  if(jcop.compiler.CompilerConfiguration.getInstance().astTransformationsDisabled())
+			return super.rewriteTo();
+		else if (jcop.VisitedNodes.firstVisit(this))
+			return new jcop.transformation.ProceedTransformer(this).errorCheckAndTransform(hostType().compilationUnit());	
+	  	else 
+	  		return super.rewriteTo();
+     }
+   }	
+   
+   public void ProceedExpr.toString(StringBuffer s) {   
+	  s.append("proceed(");
+	  for(Expr arg : getArgs()) {
+	    arg.toString(s);
+	    s.append(", ");
+	  }
+	  if (getArgs().numChildren() > 0)
+		  s.delete(s.length()-2, s.length());
+	  s.append(")");		
+	}   
+}

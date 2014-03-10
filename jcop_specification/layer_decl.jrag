@@ -1,0 +1,116 @@
+aspect LayerDecl {
+
+  rewrite LayerDecl {
+   to ASTNode {	 	 	
+	   jcop.compiler.JCopCompiler.setInstanceLayerExits(true);
+	   boolean noTransformations = jcop.compiler.CompilerConfiguration.getInstance().astTransformationsDisabled();						
+		if (isTopLevelType()) {
+			
+			jcop.transformation.LayerDeclTransformer layerTransformer =
+				new jcop.transformation.LayerDeclTransformer(this);
+			
+			if(noTransformations) {
+				//layerTransformer.addLayerField();				
+				return super.rewriteTo();
+			}
+			else
+				return layerTransformer.errorCheckAndTransform(hostType().compilationUnit());
+		}
+		else 	
+			throw new RuntimeException("Layer Decl is not Toplevel...");
+    }} 
+		 
+	
+	/*
+	public boolean LayerDecl.checkLayerDeclaration() {
+	   List<ImportDecl> imports = hostType().compilationUnit().getImportDecls();
+	   for (ImportDecl importDecl : imports) {		
+			String importId = importDecl.getAccess().type().typeName();		
+		    if(importId.equals(jcop.Globals.jcopPackage + "." + getID()))
+		    	return true;		
+	   }	   
+	   error("Layer " + getID() + " is not declared in compilation unit");
+	   return false;
+	}
+	*/
+	
+	public MethodDecl LayerDecl.lookupMethodCorrespondingTo(PartialMethodDecl partialMethodDecl) {
+		String type = partialMethodDecl.getNamePatternNoTransform().toString();
+		type = type.substring(0, type.lastIndexOf("."));		
+		String pckg = type.substring(0, type.lastIndexOf("."));
+		String name = type.substring(type.lastIndexOf(".") + 1);		
+		TypeDecl decl = lookupType(pckg, name);		
+		List<BodyDecl> bodyDecls = decl.getBodyDeclListNoTransform();
+	
+		for (BodyDecl bodyDecl : bodyDecls) {	
+			if (bodyDecl instanceof MethodDecl) {
+				String signature = ((MethodDecl) bodyDecl).signature();
+				String pmSignature = partialMethodDecl.signature();
+				if (signature.equals(pmSignature))				
+					return (MethodDecl) bodyDecl;
+			}
+		}		
+		return null;	
+	}  
+	
+	public ClassDecl LayerDecl.hostLayer() {
+		return this;
+	}
+	
+	public boolean LayerDecl.hasSubjectTypeDecl() {
+		return getSubjectTypessNoTransform().getNumChildNoTransform() > 0;
+	}
+	
+    @Override
+    public void LayerDecl.toString(StringBuffer s) {
+    	s.append("layer ");
+    	s.append(getID());
+    	toString(s, "subject", getSubjectTypess());
+     	if (hasSuperClassAccess()){
+    		s.append("extends"); 	
+    		getSuperClassAccess().toString(s);
+    	}	
+    	s.append(" {");    	
+    	for (BodyDecl bodyDecl : getBodyDecls())
+    		bodyDecl.toString(s);
+    	s.append("}\n");  	
+    }
+    
+    private void LayerDecl.toString(StringBuffer s, String keyword, List<Access> typeList) {    	
+    	if (typeList.getNumChild() > 0) {
+    		s.append(' ').append(keyword).append(' ');
+    		for (Access type : typeList)
+    			typeList.toString(s);
+    	}
+    }
+    
+	syn lazy boolean TypeDecl.isStaticActive() = getModifiers().isStaticActive();	
+    syn lazy boolean Modifiers.isStaticActive() = numModifier("staticactive") != 0;
+	inh boolean Modifiers.mayBeStaticActive(); 
+	
+	eq TypeDecl.getModifiers().mayBeStaticActive() = false;
+	eq ClassDecl.getModifiers().mayBeStaticActive() = false;
+	eq FieldDeclaration.getModifiers().mayBeStaticActive() = false;
+	eq MethodDecl.getModifiers().mayBeStaticActive() = false;
+	eq ConstructorDecl.getModifiers().mayBeStaticActive() = false;
+	eq VariableDeclaration.getModifiers().mayBeStaticActive() = false;
+	eq Program.getChild().mayBeStaticActive() = false;		
+	eq TypeDecl.getBodyDecl().mayBeStaticActive() = false;	
+	eq LayerDecl.getBodyDecl().mayBeStaticActive() = true;
+	
+	syn boolean TypeDecl.isLayerDecl() = false;
+	eq LayerDecl.isLayerDecl() = true;
+	
+	
+	refine Modifiers  public void Modifiers.checkModifiers() {
+		if (isStaticActive() && !mayBeStaticActive())
+			error("modifier staticactive not allowed in this context");
+		if(numModifier("staticactive") > 1)
+			error("only one static allowed");
+	}
+    
+    private String LayerDecl.getPointcutExpression(ParseName typeAccess, String typeName) {
+    	String expr = String.format("cflow( call(* %s.*(..)) ) && execution(* %s.*(..) )",  typeAccess, typeName);
+		return String.format( "( %s )  && !cflowbelow( %s )", expr);		
+	}	
+}

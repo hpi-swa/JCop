@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="JCop.export.jar" default="gen_jcop" basedir="..">	
+	<property name="jcoppath" value="./versions/jcop"/>	
+	<tstamp>  
+		<format property="timenow" pattern="yyyy-MM-dd_HH-mm" />  
+	</tstamp>
+		
+	<property name="version" value="v${timenow}"/>
+		
+	<target name="gen_jcop" description="Build jar file">
+		<property environment="env" />
+		<path id="project.classpath">
+			<pathelement location="${basedir}/lib/aspectjrt.jar" />
+			<pathelement location="${basedir}/lib/aspectjtools.jar" />
+			<pathelement location="${env.JAVA_HOME}/tools.jar" />
+		</path>
+
+		<pathconvert property="mf.classpath" pathsep=" ">
+			<path refid="project.classpath" />
+			<flattenmapper />
+		</pathconvert>
+ 
+		<jar destfile="./lib/jcop.jar">
+			<fileset dir="bin" includes="AST/** beaver/** jcop/** parser/** scanner/**" />
+			<fileset dir="src" includes="jcop/lang/* " />
+			<fileset dir="." includes="src/**" excludes="**/.svn/**" />
+			<fileset dir="." includes="licences/**"  excludes="**/.svn/**" />
+			<fileset dir="." includes="jcop_specification/**"  excludes="**/.svn/**" />	 
+  
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Main-Class" value="jcop.compiler.JCopCompiler" />
+				<attribute name="Class-Path" value="aspectjrt.jar aspectjtools.jar agg_V165_classes.jar" /> 
+				<section name="common">
+					<attribute name="Specification-Title" value="JCop Compiler" />
+					<attribute name="Specification-Version" value="${version}" />
+					<attribute name="Specification-Vendor" value="Software Architecture Group, Hasso-Plattner-Institute" />
+					<attribute name="Implementation-Title" value="JCop Compiler" />
+					<attribute name="Implementation-Version" value="${version} ${TODAY}" />
+					<attribute name="Implementation-Vendor" value="Software Architecture Group, Hasso-Plattner-Institute" />
+				</section>
+			</manifest>
+		</jar>		
+	</target>	 
+	
+	
+	<target name="gen_archive" depends="gen_jcop" >				
+		<zip destfile="${jcoppath}/jcop-compiler(${version}).zip" basedir="./lib" includes="jcop.jar"/>
+	</target>
+</project> 

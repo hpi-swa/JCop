@@ -1,0 +1,340 @@
+//---------------------------------------------------------------------------------------------
+// import layer LayerX;
+//---------------------------------------------------------------------------------------------
+
+//ImportDecl import_declaration =
+//   single_layer_import_declaration.s           
+//   {: return s; :};
+   
+//ImportDecl single_layer_import_declaration =    
+//    IMPORT LAYER name.n SEMICOLON  
+//	{:	return new LayerImportDecl(n);	:};
+	 
+//---------------------------------------------------------------------------------------------
+// LayerDecl
+// --------------
+// layer LayerX { 
+//    public void pckg.Classname.foo(){ ...}
+//    public void pckg.Classname.bar(){ ...}  }
+// }
+//---------------------------------------------------------------------------------------------
+ClassDecl class_declaration = 
+    layer_declaration.c  {: return c; :};
+	
+LayerDecl layer_declaration =   
+  modifiers.m LAYER IDENTIFIER subject_declaration.subject? super.s? layer_body.body  
+  {: return new LayerDecl(/*implements*/new List(), new Modifiers(m), IDENTIFIER, subject, s, body); :};
+
+List subject_declaration =   
+   FORSUBJECT class_type_list.i 
+   {: return i; :};   
+  
+//List implicit_activation =
+//    LAYER_ACTIVATION class_type_list.i 
+//    {: return i; :};
+//
+//List implicit_deactivation =
+//    	LAYER_DEACTIVATION class_type_list.i  {: return i; :};
+    
+
+
+// OpenLayerDecl
+BodyDecl class_body_declaration =
+  open_layer_declaration.d 
+  {: return d; :};
+
+OpenLayerDecl open_layer_declaration = 
+	LAYER type.t layer_body.b 
+  {: return new OpenLayerDecl(t, b); :}; 
+
+ 
+List layer_body =
+	LBRACE  layer_body_declarations.c? RBRACE     
+    {: return c; :} ;
+    
+List layer_body_declarations =
+    layer_body_declaration.c                           
+    {: return new List().add(c); :}
+    | layer_body_declarations.l layer_body_declaration .c 
+    {: return l.add(c); :} ;
+    
+BodyDecl layer_body_declaration =
+    partial_method_declaration.c 	{: return c; :}
+	| method_declaration.c 			{: return c; :}
+    | field_declaration.c 				{: return c; :} 
+    | constructor_declaration.c    	{: return c; :};
+    
+PartialMethodDecl partial_method_declaration =
+    partial_method_header.m method_body.b              
+    {: m.setBlockOpt(b); return m; :} ;
+
+PartialMethodDecl partial_method_header =
+	  modifiers.m? type.retType name_pattern.pattern LPAREN formal_parameter_list.params? RPAREN throws.exceptions?
+	  {: return new PartialMethodDecl(new Modifiers(m), retType, "", params, exceptions, new Opt(),  pattern); :};
+	  
+PartialMethodDecl partial_method_header =
+	  modifiers.m? VOID name_pattern.pattern LPAREN formal_parameter_list.params? RPAREN  throws.exceptions?	  
+	  {: return new PartialMethodDecl(new Modifiers(m), new PrimitiveTypeAccess("void"), "", params, exceptions, new Opt(),  pattern); :};
+    
+ Modifier modifier =
+        BEFORE                                	{: return new Modifier("before"); :}
+      | AFTER                                  {: return new Modifier("after");  :}
+      | ACTIVE 								{: return new Modifier("staticactive");  :}
+      ;     
+    
+//---------------------------------------------------------------------------------------------
+// partial method definitions within layer-in-class
+//---------------------------------------------------------------------------------------------
+//MethodDecl method_header =
+//  modifiers.m? type.t IDENTIFIER.i LPAREN formal_parameter_list.l? RPAREN dims.d? throws.tl?
+//  {: return new LocalPartialMethodDecl(new Modifiers(m.add(new Modifier("before"))), t.addArrayDims(d), i, l, tl, new Opt()); :};
+
+//MethodDecl method_header =
+//  BEFORE modifiers.m? VOID IDENTIFIER.i LPAREN formal_parameter_list.l? RPAREN dims.d? throws.tl?
+//  {: return new LocalPartialMethodDecl("before", new Modifiers(m), new PrimitiveTypeAccess("void"), i, l, tl, new Opt()); :};
+
+//MethodDecl method_header =
+//  AFTER modifiers.m? VOID IDENTIFIER.i LPAREN formal_parameter_list.l? RPAREN dims.d? throws.tl?
+//  {: return new LocalPartialMethodDecl("after", new Modifiers(m),new PrimitiveTypeAccess("void"),  i, l, tl, new Opt()); :};
+//
+//MethodDecl method_header =
+//  AFTER modifiers.m? type.t IDENTIFIER.i LPAREN formal_parameter_list.l? RPAREN dims.d? throws.tl?
+//  {: return new LocalPartialMethodDecl("after", new Modifiers(m),t.addArrayDims(d),  i, l, tl, new Opt()); :};
+
+//---------------------------------------------------------------------------------------------
+// partial method definitions within class-in-layer
+//---------------------------------------------------------------------------------------------
+
+  
+//MethodDecl partial_method_header =
+//  modifiers.m? VOID name_pattern.i LPAREN formal_parameter_list.params? RPAREN dims.d? throws.tl?
+//  {: return new FQPartialMethodDecl(new PrimitiveTypeAccess("void"),"", new Modifiers(m), i, l, tl, new Opt()); :};
+  
+//MethodDecl partial_method_header =
+//  modifiers.m? type.t name_pattern.pattern LPAREN formal_parameter_list.params? RPAREN throws.exceptions?  
+//  {: return new FQPartialMethodDecl("", new Modifiers(m), t, pattern, params, exceptions, new Opt()); :};
+
+
+//MethodDecl partial_method_header =
+//  AFTER modifiers.m? VOID name_pattern.i LPAREN formal_parameter_list.params? RPAREN dims.d? throws.tl?
+//  {: return new FQPartialMethodDecl(new PrimitiveTypeAccess("void"),"after","", new Modifiers(m),  i, l, tl, new Opt()); :};
+
+//MethodDecl partial_method_header =
+//  AFTER modifiers.m? type.t name_pattern.pattern LPAREN formal_parameter_list.params? RPAREN throws.exceptions?
+//  {: return new FQPartialMethodDecl("", new Modifiers(m.add(new Modifier("after"))), t, pattern, params, exceptions, new Opt()); :};
+  
+//---------------------------------------------------------------------------------------------
+//  proceed(....)
+//---------------------------------------------------------------------------------------------
+Access method_invocation = 
+		PROCEED LPAREN argument_list.l? RPAREN 
+		{: return new ProceedExpr(l); :}
+	|	SUPER_PROCEED LPAREN argument_list.l? RPAREN 
+		{: return new SuperProceedExpr(l); :};
+
+//---------------------------------------------------------------------------------------------
+// with(LayerX){ <statements> }
+//---------------------------------------------------------------------------------------------
+Stmt block_statement = 
+  LAYER_ACTIVATION LPAREN  argument_list.p  RPAREN statement_no_short_if.s
+  {: return new LayerActivation(p, new Block(new List<Stmt>().add(s)), true); :};
+
+
+//Stmt block_statement = 
+//  LAYER_ACTIVATION LPAREN  argument_list.p  RPAREN block.b
+//  {: return new LayerActivation(p, b, true); :};
+
+//---------------------------------------------------------------------------------------------
+// without(LayerX){ <statements> }
+//---------------------------------------------------------------------------------------------
+//Stmt block_statement = 
+//  LAYER_DEACTIVATION LPAREN  argument_list.p  RPAREN block.b   
+//  {: return new LayerActivation(p, b, false); :};
+  
+Stmt block_statement = 
+  LAYER_DEACTIVATION LPAREN  argument_list.p  RPAREN statement_no_short_if.s
+  {: return new LayerActivation(p, new Block(new List<Stmt>().add(s)), false); :};  
+
+
+//---------------------------------------------------------------------------------------------
+//  <Object> with (LayerX);
+//---------------------------------------------------------------------------------------------
+Expr object_access :=
+   primary_no_new_array.e {: return e; :} |
+   name.e {: return e; :};
+
+Stmt statement = 
+  object_access.e LAYER_ACTIVATION LPAREN  argument_list.a  RPAREN SEMICOLON
+  {: return new ObjectSpecificLayerActivation(e, a, true); :};  
+    
+//---------------------------------------------------------------------------------------------
+//  <Object> without (LayerX);
+//---------------------------------------------------------------------------------------------
+Stmt statement = 
+  object_access.e LAYER_DEACTIVATION LPAREN  argument_list.a  RPAREN SEMICOLON
+  {: return new ObjectSpecificLayerActivation(e, a, false); :};
+  
+//---------------------------------------------------------------------------------------------
+//  <Object> without;
+//---------------------------------------------------------------------------------------------
+Stmt statement = 
+  object_access.e LAYER_DEACTIVATION SEMICOLON
+  {: return new ObjectSpecificLayerActivation(e, new List(), false); :};    
+
+//---------------------------------------------------------------------------------------------
+// Context
+// --------------
+// context <ID> { 
+//    <context_constraint>*
+
+//    <members>*,methods*,...
+// }
+//---------------------------------------------------------------------------------------------
+
+TypeDecl type_declaration = 
+    context_declaration.c  
+    {: return c; :};
+
+// TODO several body decl and  
+/*
+ContextDecl context_declaration =   
+  modifiers.m? CONTEXT IDENTIFIER LBRACE
+    context_constraint.first_constraint
+  RBRACE   
+  {: return new ContextDecl(new Modifiers(m), new Opt(), new List(), new List(), IDENTIFIER, new List().add(first_constraint)); :} 
+  | modifiers.m? CONTEXT IDENTIFIER LBRACE
+    class_body_declaration.first_body*
+    context_constraint.first_constraint
+  RBRACE   
+  {: return new ContextDecl(new Modifiers(m), new Opt(), new List(), new List().add(first_body), IDENTIFIER, new List().add(first_constraint)); :} 
+  | modifiers.m? CONTEXT IDENTIFIER LBRACE
+    class_body_declaration.first_body
+    context_constraint.first_constraint
+    addidional_context_body_block.additional_body
+  RBRACE   
+  {: for(Object currentDecl : first_body)
+       additional_body.getBodyElelemtListNoTransform().add(new BodyDecl().add(currentDecl));
+     additional_body.getConstraintListNoTransform().add(first_constraint); 
+     return new ContextDecl(new Modifiers(m), new Opt(), new List(), additional_body.getBodyElelemtListNoTransform(), IDENTIFIER, additional_body.getConstraintListNoTransform()); :}; 
+*/
+ContextDecl context_declaration =   
+  modifiers.m? CONTEXT IDENTIFIER LBRACE
+    addidional_context_body_block.additional_body
+  RBRACE   
+  {: return new ContextDecl(new Modifiers(m), new Opt(), new List(), additional_body.getBodyElelemtListNoTransform(), IDENTIFIER, additional_body.getConstraintListNoTransform()); :} 
+;
+
+ContextBodyBlock addidional_context_body_block =
+    context_constraint.last_constraint                   
+    {: return new ContextBodyBlock(new List(), new List().add(last_constraint), new List()); :}
+    | class_body_declaration.last_bodydecl
+    {: return new ContextBodyBlock(new List(), new List(), new List().add(last_bodydecl)); :}
+	| context_constraint.next_constraint addidional_context_body_block.additional_body
+    {: additional_body.getConstraintListNoTransform().add(next_constraint); return additional_body; :}
+	| class_body_declaration.next_bodydecl addidional_context_body_block.additional_body 
+    {: additional_body.getBodyElelemtListNoTransform().add(next_bodydecl); return additional_body; :}
+ ;
+    
+/*List context_body =
+    LBRACE context_body_declarations.c? RBRACE    
+    {: return c; :} ;
+
+List context_body_declarations =
+    declarative_composition_declaration.c                           
+    {: return new List().add(c); :}
+    | declarative_composition_declaration.c class_body_declarations.l 
+    {: return l.add(c); :} ;
+*/
+
+
+//---------------------------------------------------------------------------------------------
+// <pointcut_expr> { [ with(LayerX); | without(LayerY); ] }
+//---------------------------------------------------------------------------------------------
+ContextConstraint context_constraint =
+  pointcut_expr.p dla_block.s
+  {: return new ContextConstraint(p, s); :};
+  
+LayerActivationBlock dla_block = 
+  COLON dla_composition_statements.s SEMICOLON   
+  {: return new LayerActivationBlock(new List(), s); :};
+  
+List dla_composition_statements = 
+     dla_composition_statement.s                           
+     {: return new List().add(s); :}
+   | dla_composition_statements.l COMMA dla_composition_statement.s 
+     {: return l.add(s); :} ;  
+  
+DLALayerActivation dla_composition_statement =
+     LAYER_ACTIVATION LPAREN  argument_list.a  RPAREN 
+     {: return new DLALayerActivation(a, true); :}
+   | LAYER_DEACTIVATION LPAREN  argument_list.a  RPAREN 
+     {: return new DLALayerActivation(a, false); :} ;     
+     
+//---------------------------------------------------------------------------------------------
+// fancy stuff
+//---------------------------------------------------------------------------------------------     
+IfStmt if_then_statement =
+    UNLESS LPAREN expression.e RPAREN statement.s  
+    {: return new IfStmt(new LogNotExpr(e), s, new Opt()); :}
+  ;
+
+IfStmt if_then_else_statement =
+    UNLESS LPAREN expression.e RPAREN statement_no_short_if.t ELSE statement.els 
+    {: return new IfStmt(new LogNotExpr(e), t, new Opt(els)); :}
+  ;
+  
+IfStmt if_then_else_statement_no_short_if =
+    UNLESS LPAREN expression.e RPAREN statement_no_short_if.t ELSE statement_no_short_if.els 
+    {: return new IfStmt(new LogNotExpr(e), t, new Opt(els)); :}
+  ;    
+
+Stmt statement = 
+     statement_expression.s UNLESS expression.e SEMICOLON 
+    {: return new IfStmt(new LogNotExpr(e), s, new Opt()); :}
+  ;
+  
+Stmt statement = 
+     statement_expression.s IF expression.e SEMICOLON 
+    {: return new IfStmt(e, s, new Opt()); :}
+  ;   
+      
+Expr primary_no_new_array =
+	THIS_LAYER 
+	{: return new ThisLayerAccess("thislayer"); :}  ;
+  
+//  Access field_access =
+//	  SUPER_LAYER simple_name.id 
+//	  {: SuperLayerAccess s = new SuperLayerAccess("super");
+//	       s.setStart(SUPER_LAYER.getStart());
+//	       s.setEnd(SUPER_LAYER.getEnd());
+//	       return s.qualifiesAccess(id); :}
+//	 |  name.n DOT SUPER_LAYER DOT simple_name.id
+//	    {: SuperLayerAccess s = new SuperLayerAccess("super");
+//     		s.setStart(SUPER_LAYER.getStart());
+//     		s.setEnd(SUPER_LAYER.getEnd());
+// 			return n.qualifiesAccess(s).qualifiesAccess(id); :}
+//;
+
+
+//Access method_invocation =
+//	SUPER_LAYER DOT IDENTIFIER LPAREN argument_list.l? RPAREN
+//	     {: SuperLayerAccess s = new SuperLayerAccess("super");
+//	        s.setStart(SUPER_LAYER.getStart());
+//	        s.setEnd(SUPER_LAYER.getEnd());
+//	        MethodAccess m = new MethodAccess(IDENTIFIER, l);
+//	        m.setStart(IDENTIFIER.getStart());
+//	        m.setEnd(RPAREN.getEnd());
+//	        return s.qualifiesAccess(m); :}
+//	  |
+//	  SUPER_LAYER DOT field_access.n DOT IDENTIFIER LPAREN argument_list.l? RPAREN
+//	     {: SuperLayerAccess s = new SuperLayerAccess("super");
+//	        s.setStart(SUPER_LAYER.getStart());
+//	        s.setEnd(SUPER_LAYER.getEnd());
+//	        MethodAccess m = new MethodAccess(IDENTIFIER, l);
+//	        m.setStart(IDENTIFIER.getStart());
+//	        m.setEnd(RPAREN.getEnd());
+//	        return n.qualifiesAccess(s).qualifiesAccess(m); :}
+//	   ;
+   	 
+	
+  

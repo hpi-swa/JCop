@@ -1,0 +1,30 @@
+aspect SubjectLayerDecl {
+
+  rewrite SubjectLayerDecl {
+	  to ASTNode {	 
+		  if(jcop.compiler.CompilerConfiguration.getInstance().astTransformationsDisabled())
+			  return super.rewriteTo();      	 	
+		  String pointcutExpression = getPointcutExpression(getSubjectTypeAccess(), topLevelType().typeName());
+		  jcop.generation.jcopaspect.JCopAspect.getInstance().addLayerActivationStatement(pointcutExpression, getID());		
+		  return super.rewriteTo();
+	}} 
+	
+	
+  private String SubjectLayerDecl.getPointcutExpression(Access typeAccess, String typeName) {
+		return 	
+		"(" +
+		"  cflow (  " +
+		"    call(* " + typeAccess + ".*(..))" +
+		"   ) && " +
+		"   execution(* " + typeName + ".*(..) )" +
+		")" +
+		"&& !cflowbelow( " +
+		"  cflow ( " +
+		"      call(* " + typeAccess + ".*(..)) " +
+		"   ) && " +
+		"   execution(* " + typeName + ".*(..) )" +
+		" )";		
+	
+	}
+  
+}

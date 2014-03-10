@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Document version="1.0">
+    <GraphTransformationSystem ID="I1" name="GraGra">
+        <TaggedValue Tag="AttrHandler" TagValue="Java Expr">
+            <TaggedValue Tag="Package" TagValue="java.lang"/>
+            <TaggedValue Tag="Package" TagValue="java.util"/>
+            <TaggedValue Tag="Package" TagValue="com.objectspace.jgl"/>
+        </TaggedValue>
+        <TaggedValue Tag="CSP" TagValue="true"/>
+        <TaggedValue Tag="injective" TagValue="true"/>
+        <TaggedValue Tag="dangling" TagValue="true"/>
+        <TaggedValue Tag="identification" TagValue="true"/>
+        <TaggedValue Tag="NACs" TagValue="true"/>
+        <TaggedValue Tag="PACs" TagValue="true"/>
+        <TaggedValue Tag="breakAllLayer" TagValue="true"/>
+        <TaggedValue Tag="showGraphAfterStep" TagValue="true"/>
+        <TaggedValue Tag="TypeGraphLevel" TagValue="DISABLED"/>
+        <Types>
+            <NodeType ID="I2" abstract="false" name="AstNode%:RECT:java.awt.Color[r=255,g=0,b=0]:[NODE]:"/>
+            <NodeType ID="I3" abstract="false" name="Program%:RECT:java.awt.Color[r=0,g=0,b=0]:[NODE]:">
+                <Parent pID="I2"/>
+            </NodeType>
+            <NodeType ID="I4" abstract="false" name="Statement%:RECT:java.awt.Color[r=255,g=0,b=0]:[NODE]:">
+                <Parent pID="I2"/>
+            </NodeType>
+            <NodeType ID="I5" abstract="false" name="Expression%:RECT:java.awt.Color[r=255,g=0,b=0]:[NODE]:">
+                <Parent pID="I4"/>
+            </NodeType>
+            <NodeType ID="I6" abstract="false" name="If%:RECT:java.awt.Color[r=0,g=0,b=0]:[NODE]:">
+                <Parent pID="I4"/>
+            </NodeType>
+            <NodeType ID="I7" abstract="false" name="Class%:RECT:java.awt.Color[r=0,g=0,b=0]:[NODE]:">
+                <Parent pID="I2"/>
+                <AttrType ID="I9" attrname="name" typename="String" visible="true"/>
+            </NodeType>
+            <NodeType ID="I10" abstract="false" name="Field%:RECT:java.awt.Color[r=0,g=0,b=0]:[NODE]:">
+                <Parent pID="I2"/>
+                <AttrType ID="I12" attrname="name" typename="String" visible="true"/>
+            </NodeType>
+            <NodeType ID="I13" abstract="false" name="Method%:RECT:java.awt.Color[r=0,g=0,b=0]:[NODE]:">
+                <Parent pID="I2"/>
+                <AttrType ID="I15" attrname="name" typename="String" visible="true"/>
+            </NodeType>
+            <NodeType ID="I16" abstract="false" name="Return%:RECT:java.awt.Color[r=0,g=0,b=0]:[NODE]:">
+                <Parent pID="I4"/>
+            </NodeType>
+            <NodeType ID="I17" abstract="false" name="Print%:RECT:java.awt.Color[r=0,g=0,b=0]:[NODE]:">
+                <Parent pID="I4"/>
+            </NodeType>
+            <NodeType ID="I18" abstract="false" name="Instantiation%:RECT:java.awt.Color[r=0,g=0,b=0]:[NODE]:">
+                <Parent pID="I5"/>
+            </NodeType>
+            <NodeType ID="I19" abstract="false" name="Assignment%:RECT:java.awt.Color[r=0,g=0,b=0]:[NODE]:">
+                <Parent pID="I5"/>
+            </NodeType>
+            <NodeType ID="I20" abstract="false" name="MethodCall%:RECT:java.awt.Color[r=0,g=0,b=0]:[NODE]:">
+                <Parent pID="I5"/>
+            </NodeType>
+            <NodeType ID="I22" abstract="false" name="Operation%:RECT:java.awt.Color[r=255,g=0,b=0]:[NODE]:">
+                <Parent pID="I5"/>
+                <AttrType ID="I24" attrname="operator" typename="String" visible="true"/>
+            </NodeType>
+            <NodeType ID="I21" abstract="false" name="BinaryOperation%:RECT:java.awt.Color[r=0,g=0,b=0]:[NODE]:">
+                <Parent pID="I22"/>
+            </NodeType>
+            <NodeType ID="I25" abstract="false" name="UnaryOperation%:RECT:java.awt.Color[r=0,g=0,b=0]:[NODE]:">
+                <Parent pID="I22"/>
+            </NodeType>
+            <NodeType ID="I26" abstract="false" name="Reference%:RECT:java.awt.Color[r=255,g=0,b=0]:[NODE]:">
+                <Parent pID="I5"/>
+            </NodeType>
+            <NodeType ID="I27" abstract="false" name="Identifier%:RECT:java.awt.Color[r=0,g=0,b=0]:[NODE]:">
+                <Parent pID="I26"/>
+                <AttrType ID="I29" attrname="name" typename="String" visible="true"/>
+            </NodeType>
+            <NodeType ID="I30" abstract="false" name="This%:RECT:java.awt.Color[r=0,g=0,b=0]:[NODE]:">
+                <Parent pID="I26"/>
+            </NodeType>
+            <NodeType ID="I31" abstract="false" name="Literal%:RECT:java.awt.Color[r=255,g=0,b=0]:[NODE]:">
+                <Parent pID="I5"/>
+            </NodeType>
+            <NodeType ID="I32" abstract="false" name="Integer%:RECT:java.awt.Color[r=0,g=0,b=0]:[NODE]:">
+                <Parent pID="I31"/>
+                <AttrType ID="I34" attrname="value" typename="Integer" visible="true"/>
+            </NodeType>
+            <NodeType ID="I35" abstract="false" name="Boolean%:RECT:java.awt.Color[r=0,g=0,b=0]:[NODE]:">
+                <Parent pID="I31"/>
+                <AttrType ID="I37" attrname="value" typename="Boolean" visible="true"/>
+            </NodeType>
+            <NodeType ID="I38" abstract="false" name="String%:RECT:java.awt.Color[r=0,g=0,b=0]:[NODE]:">
+                <Parent pID="I31"/>
+                <AttrType ID="I40" attrname="value" typename="String" visible="true"/>
+            </NodeType>
+            <NodeType ID="I41" abstract="false" name="Null%:RECT:java.awt.Color[r=0,g=0,b=0]:[NODE]:">
+                <Parent pID="I31"/>
+            </NodeType>
+            <NodeType ID="I42" abstract="false" name="Parameter%:RECT:java.awt.Color[r=0,g=0,b=0]:[NODE]:">
+                <Parent pID="I2"/>
+                <AttrType ID="I44" attrname="name" typename="String" visible="true"/>
+            </NodeType>
+            <NodeType ID="I45" abstract="false" name="FieldReference%:RECT:java.awt.Color[r=0,g=0,b=0]:[NODE]:">
+                <Parent pID="I26"/>
+            </NodeType>
+            <NodeType ID="I46" abstract="false" name="Layer%:RECT:java.awt.Color[r=0,g=0,b=255]:[NODE]:">
+                <Parent pID="I7"/>
+            </NodeType>
+            <NodeType ID="I48" abstract="false" name="PartialMethod%:RECT:java.awt.Color[r=0,g=0,b=255]:[NODE]:">
+                <Parent pID="I13"/>
+            </NodeType>
+            <NodeType ID="I50" abstract="false" name="ProceedExpr%:RECT:java.awt.Color[r=0,g=0,b=255]:[NODE]:">
+                <Parent pID="I5"/>
+            </NodeType>
+            <NodeType ID="I51" abstract="false" name="Context%:RECT:java.awt.Color[r=0,g=0,b=255]:[NODE]:">
+                <Parent pID="I7"/>
+            </NodeType>
+            <NodeType ID="I53" abstract="false" name="DeclarativeLayerActivation%:RECT:java.awt.Color[r=0,g=0,b=255]:[NODE]:">
+                <Parent pID="I4"/>
+            </NodeType>
+            <NodeType ID="I54" abstract="false" name="With%:RECT:java.awt.Color[r=0,g=0,b=255]:[NODE]:">
+                <Parent pID="I4"/>
+            </NodeType>
+            <NodeType ID="I55" abstract="false" name="Constructor%:RECT:java.awt.Color[r=0,g=0,b=0]:[NODE]:">
+                <Parent pID="I2"/>
+            </NodeType>
+            <NodeType ID="I56" abstract="false" name="Without%:RECT:java.awt.Color[r=0,g=0,b=255]:[NODE]:">
+                <Parent pID="I4"/>
+            </NodeType>
+            <EdgeType ID="I57" abstract="false" name="contains%:SOLID_LINE:java.awt.Color[r=0,g=0,b=0]:[EDGE]:"/>
+            <EdgeType ID="I58" abstract="false" name="nextStmt%:SOLID_LINE:java.awt.Color[r=0,g=0,b=0]:[EDGE]:"/>
+            <EdgeType ID="I59" abstract="false" name="lhs%:SOLID_LINE:java.awt.Color[r=0,g=0,b=0]:[EDGE]:"/>
+            <EdgeType ID="I60" abstract="false" name="rhs%:SOLID_LINE:java.awt.Color[r=0,g=0,b=0]:[EDGE]:"/>
+            <EdgeType ID="I61" abstract="false" name="ifBody%:SOLID_LINE:java.awt.Color[r=0,g=0,b=0]:[EDGE]:"/>
+            <EdgeType ID="I62" abstract="false" name="elseBody%:SOLID_LINE:java.awt.Color[r=0,g=0,b=0]:[EDGE]:"/>
+            <EdgeType ID="I63" abstract="false" name="condition%:SOLID_LINE:java.awt.Color[r=0,g=0,b=0]:[EDGE]:"/>
+            <EdgeType ID="I64" abstract="false" name="nextParameter%:SOLID_LINE:java.awt.Color[r=0,g=0,b=0]:[EDGE]:"/>
+            <EdgeType ID="I65" abstract="false" name="receiver%:SOLID_LINE:java.awt.Color[r=0,g=0,b=0]:[EDGE]:"/>
+            <EdgeType ID="I66" abstract="false" name="nextMethod%:SOLID_LINE:java.awt.Color[r=0,g=0,b=0]:[EDGE]:"/>
+            <EdgeType ID="I67" abstract="false" name="nextArgument%:SOLID_LINE:java.awt.Color[r=0,g=0,b=0]:[EDGE]:"/>
+            <EdgeType ID="I68" abstract="false" name="withBody%:SOLID_LINE:java.awt.Color[r=0,g=0,b=255]:[EDGE]:"/>
+            <Graph ID="I69" kind="TG" name="TypeGraph">
+                <Node ID="I70" type="I2">
+                    <NodeLayout X="607" Y="72"/>
+                    <additionalLayout age="0" force="10" frozen="true" zone="50"/>
+                </Node>
+                <Node ID="I71" type="I3">
+                    <NodeLayout X="249" Y="156"/>
+                    <additionalLayout age="0" force="10" frozen="true" zone="50"/>
+                </Node>
+                <Node ID="I72" type="I4">
+                    <NodeLayout X="705" Y="156"/>
+                    <additionalLayout age="0" force="10" frozen="true" zone="50"/>
+                </Node>
+                <Node ID="I73" type="I6">
+                    <NodeLayout X="704" Y="267"/>
+                    <additionalLayout age="0" force="10" frozen="true" zone="50"/>
+                </Node>
+                <Node ID="I74" type="I13">
+                    <NodeLayout X="426" Y="156"/>
+                    <additionalLayout age="0" force="10" frozen="true" zone="50"/>
+                </Node>
+                <Node ID="I76" type="I10">
+                    <NodeLayout X="517" Y="156"/>
+                    <additionalLayout age="0" force="10" frozen="true" zone="50"/>
+                </Node>
+                <Node ID="I78" type="I7">
+                    <NodeLayout X="339" Y="157"/>
+                    <additionalLayout age="0" force="10" frozen="true" zone="50"/>
+                </Node>
+                <Node ID="I80" type="I5">
+                    <NodeLayout X="638" Y="266"/>
+                    <additionalLayout age="0" force="10" frozen="true" zone="50"/>
+                </Node>
+                <Node ID="I81" type="I17">
+                    <NodeLayout X="821" Y="266"/>
+                    <additionalLayout age="0" force="10" frozen="true" zone="50"/>
+                </Node>
+                <Node ID="I82" type="I16">
+                    <NodeLayout X="758" Y="267"/>
+                    <additionalLayout age="0" force="10" frozen="true" zone="50"/>
+                </Node>
+                <Node ID="I83" type="I18">
+                    <NodeLayout X="329" Y="357"/>
+                    <additionalLayout age="0" force="10" frozen="true" zone="50"/>
+                </Node>
+                <Node ID="I84" type="I19">
+                    <NodeLayout X="569" Y="350"/>
+                    <additionalLayout age="0" force="10" frozen="true" zone="50"/>
+                </Node>
+                <Node ID="I85" type="I20">
+                    <NodeLayout X="677" Y="352"/>
+                    <additionalLayout age="0" force="10" frozen="true" zone="50"/>
+                </Node>
+                <Node ID="I86" type="I25">
+                    <NodeLayout X="503" Y="411"/>
+                    <additionalLayout age="0" force="10" frozen="true" zone="50"/>
+                </Node>
+                <Node ID="I88" type="I21">
+                    <NodeLayout X="397" Y="411"/>
+                    <additionalLayout age="0" force="10" frozen="true" zone="50"/>
+                </Node>
+                <Node ID="I90" type="I31">
+                    <NodeLayout X="1051" Y="357"/>
+                    <additionalLayout age="0" force="10" frozen="true" zone="50"/>
+                </Node>
+                <Node ID="I91" type="I38">
+                    <NodeLayout X="1019" Y="433"/>
+                    <additionalLayout age="0" force="10" frozen="true" zone="50"/>
+                </Node>
+                <Node ID="I93" type="I41">
+                    <NodeLayout X="1186" Y="431"/>
+                    <additionalLayout age="0" force="10" frozen="true" zone="50"/>
+                </Node>
+                <Node ID="I94" type="I32">
+                    <NodeLayout X="927" Y="434"/>
+                    <additionalLayout age="0" force="10" frozen="true" zone="50"/>
+                </Node>
+                <Node ID="I96" type="I35">
+                    <NodeLayout X="1108" Y="433"/>
+                    <additionalLayout age="0" force="10" frozen="true" zone="50"/>
+                </Node>
+                <Node ID="I98" type="I27">
+                    <NodeLayout X="684" Y="434"/>
+                    <additionalLayout age="0" force="10" frozen="true" zone="50"/>
+                </Node>
+                <Node ID="I100" type="I30">
+                    <NodeLayout X="747" Y="434"/>
+                    <additionalLayout age="0" force="10" frozen="true" zone="50"/>
+                </Node>
+                <Node ID="I101" type="I42">
+                    <NodeLayout X="605" Y="156"/>
+                    <additionalLayout age="0" force="10" frozen="true" zone="50"/>
+                </Node>
+                <Node ID="I103" type="I26">
+                    <NodeLayout X="812" Y="356"/>
+                    <additionalLayout age="0" force="10" frozen="true" zone="50"/>
+                </Node>
+                <Node ID="I104" type="I45">
+                    <NodeLayout X="825" Y="433"/>
+                    <additionalLayout age="0" force="10" frozen="true" zone="50"/>
+                </Node>
+                <Node ID="I105" type="I51">
+                    <NodeLayout X="293" Y="240"/>
+                    <additionalLayout age="0" force="10" frozen="true" zone="50"/>
+                </Node>
+                <Node ID="I107" type="I53">
+                    <NodeLayout X="939" Y="265"/>
+                    <additionalLayout age="0" force="10" frozen="true" zone="50"/>
+                </Node>
+                <Node ID="I108" type="I46">
+                    <NodeLayout X="349" Y="240"/>
+                    <additionalLayout age="0" force="10" frozen="true" zone="50"/>
+                </Node>
+                <Node ID="I110" type="I48">
+                    <NodeLayout X="425" Y="240"/>
+                    <additionalLayout age="0" force="10" frozen="true" zone="50"/>
+                </Node>
+                <Node ID="I112" type="I50">
+                    <NodeLayout X="214" Y="356"/>
+                    <additionalLayout age="0" force="10" frozen="true" zone="50"/>
+                </Node>
+                <Node ID="I113" type="I54">
+                    <NodeLayout X="1090" Y="264"/>
+                    <additionalLayout age="0" force="10" frozen="true" zone="50"/>
+                </Node>
+                <Node ID="I114" type="I55">
+                    <NodeLayout X="163" Y="153"/>
+                    <additionalLayout age="0" force="10" frozen="true" zone="50"/>
+                </Node>
+                <Node ID="I115" type="I56">
+                    <NodeLayout X="1156" Y="262"/>
+                    <additionalLayout age="0" force="10" frozen="true" zone="50"/>
+                </Node>
+                <Node ID="I116" type="I22">
+                    <NodeLayout X="451" Y="356"/>
+                    <additionalLayout age="0" force="10" frozen="false" zone="50"/>
+                </Node>
+            </Graph>
+        </Types>
+        <Graph ID="I118" kind="HOST" name="Usage" staticNodePosition="true"/>
+        <Rule ID="I119" name="Rule">
+            <Graph ID="I121" kind="LHS" name="LeftOf_Rule"/>
+            <Graph ID="I122" kind="RHS" name="RightOf_Rule"/>
+            <Morphism name="Rule"/>
+            <TaggedValue Tag="layer" TagValue="0"/>
+            <TaggedValue Tag="priority" TagValue="0"/>
+        </Rule>
+    </GraphTransformationSystem>
+</Document>

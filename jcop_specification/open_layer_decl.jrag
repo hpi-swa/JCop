@@ -1,0 +1,53 @@
+aspect OpenLayerDecl {
+  /*syn boolean LayerInClass.isPublic() = false;
+  syn boolean LayerInClass.isProtected() = false;
+  syn boolean LayerInClass.isAbstract() = true;*/
+  syn boolean OpenLayerDecl.isStatic() = true;
+  /*
+  syn boolean LayerInClass.isMethodParameter() = false;
+  syn boolean LayerInClass.isConstructorParameter() = false;
+  syn boolean LayerInClass.isExceptionHandlerParameter() = false;*/
+  
+  rewrite OpenLayerDecl {
+   to ASTNode {	  
+	   jcop.compiler.JCopCompiler.setInstanceLayerExits(true);
+	   boolean noTransformations = jcop.compiler.CompilerConfiguration.getInstance().astTransformationsDisabled();		
+			if(noTransformations) 				
+				return super.rewriteTo();			
+			//if (!layerIsDeclared())
+			//	return new InstanceInitializer(new Block(new List<Stmt>()));
+			return new jcop.transformation.OpenLayerDeclTransformer(this).errorCheckAndTransform(hostType().compilationUnit());		
+   }}
+  
+  public boolean OpenLayerDecl.layerIsDeclared() {				
+	for (ImportDecl importDecl : getImportsOfEnclClass()) {
+		String importId = importDecl.getAccess().type().name();
+		if (importId.equals(getID()))
+			return true;
+	}					
+	error("Layer " + getID()+ " is not declared in compilation unit");
+	return false;
+  }	
+  
+	private List<ImportDecl> OpenLayerDecl.getImportsOfEnclClass() {
+		 return hostType().compilationUnit().getImportDecls();
+	}
+
+	public String OpenLayerDecl.getID() {
+		return getTypeName().toString();
+	}
+  	
+	public ClassDecl OpenLayerDecl.hostLayer() {
+		String pckg = getTypeName().packageName();		
+		return (ClassDecl)lookupType(getID()).iterator().next();
+	}
+	
+	public void OpenLayerDecl.toString(StringBuffer s) {
+		s.append("layer ");
+		s.append(getID());
+		s.append(" {");		
+		for (BodyDecl bodyDecl : getBodyDecls())
+			bodyDecl.toString(s);
+		s.append("}\n");  	
+	} 
+ }

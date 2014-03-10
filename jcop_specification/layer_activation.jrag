@@ -1,0 +1,30 @@
+aspect LayerActivation {
+  syn boolean LayerActivation.isMethodParameter() = false;
+  
+  	public void LayerActivation.toString(StringBuffer s) {
+		if(getActivation())
+			s.append("with (");
+		else
+			s.append("without (");
+		for (Expr arg : getArgs()) {
+			arg.toString(s);
+			s.append(", ");
+		}
+		if (getArgs().numChildren() > 0)
+			s.delete(s.length()-2, s.length());
+		s.append(") ");		
+		getBlock().toString(s);		
+	}
+  
+  rewrite LayerActivation {
+   to ASTNode {
+	   if(jcop.compiler.CompilerConfiguration.getInstance().astTransformationsDisabled())
+			return super.rewriteTo();
+		else
+			return new jcop.transformation.LayerActivationTransformer(this).errorCheckAndTransform(hostType().compilationUnit());		
+    }
+  }    		 
+} 
+
+
+

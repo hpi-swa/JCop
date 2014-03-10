@@ -1,0 +1,317 @@
+package jcop.lang;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.logging.Logger;
+
+
+
+public class Composition {
+	public final Layer BASE = new Layer("base");
+	private Layers tmpActualLayers;	
+	private Layers activatedLayers;
+	private Layers deactivatedLayers;
+	private String deactivated = "";
+	private ContextComposition contexts;
+	
+	public static final ThreadLocal<Composition> current = new ThreadLocal<Composition>() {
+		protected Composition initialValue() {
+			return new Composition();
+		}
+	};
+	
+	private static List<Layer> getPartialMethodProvidersFor(String signature) {
+		List<Layer> layers = new ArrayList<Layer>();
+		for (Layer l : Layer.getLayers()) {
+			if (l.providesPartialMethod(signature))
+				layers.add(l);
+		}
+		return layers;
+	}
+	
+	public static void activateLayer(Layer... layers) {
+		current().addLayer(layers);
+	}
+	public static void deactivateLayer(Layer... layers) {
+		for (Layer l : layers) {
+			current().removeLayer(l);	
+		}
+		
+	}
+//	public static List<Layer> getImplicitlyActivatedLayers(Object target) {
+//		return getImplicitlyActivatedLayers(target, Arrays.asList(Layer.getLayers()));
+//	}
+
+	public static List<Layer> getImplicitlyActivatedLayers(String signature, Object target) {
+		return getImplicitlyActivatedLayers(target, getPartialMethodProvidersFor(signature));
+	}
+
+	protected Composition() {
+		//super();
+		activatedLayers = new Layers();
+		deactivatedLayers = new Layers();
+		contexts = new ContextComposition(this);
+	}
+
+	public static void setComposition(Composition comp) {
+		comp.setContexts(current.get().getContexts());
+		current.set(comp);		
+	} 
+
+	
+	public static ContextComposition contexts() {
+		return current().getContexts();
+	}
+	
+	public static Composition current() {
+		return current.get();
+	}
+
+	public Composition addLayer(Collection<Layer> layerList) {
+		Composition old = this.clone();
+		for (Layer _layer : layerList) {
+			if (_layer != null) {
+				addLayer(_layer.getImplicitActivations());				
+				for (Layer toBeDeactivated : _layer.getImplicitDeActivations()) 
+					removeLayer(toBeDeactivated);
+				this.deactivatedLayers.remove(_layer);				
+				this.activatedLayers.add(0, _layer);
+				invalidateComposition();
+			}
+		}
+		return old;
+	}
+
+	public Composition addLayerWithLogging(String loggerName, Collection<Layer> layerList) {
+		Composition old = this.addLayer(layerList);
+		Collection<String> layerNames = new ArrayList<String>();
+		for (Layer _layer : layerList) {
+			layerNames.add(_layer.toString());
+		}
+		LayerLogger.logLayerActivation(loggerName, layerNames.toArray(new String[layerNames.size()]));
+		return old;
+	}
+
+	public Composition addLayer(Layer... layerList) {
+		return this.addLayer(Arrays.asList(layerList));
+	}
+
+	public Composition addLayerWithLogging(String loggerName, Layer... layerList) {
+		Composition old = this.addLayer(layerList);
+		String[] layerNames = new String[layerList.length];
+		for (int i = 0; i < layerList.length; ++i) {
+			layerNames[i] = layerList[i].toString();
+		}
+		 
+		LayerLogger.logLayerActivation(loggerName, layerNames);
+		return old;
+	}
+
+	int pos = 0;
+	
+	public Layer firstLayer() {		
+		pos = 1;
+		return getTmpLayerComposition().get(0);
+		
+	}
+
+	/**
+	 * get Layer returns the composition's layers without the base method
+	 * @return
+	 */
+	public Layer[] getLayer() {
+		Layers l = (Layers) getTmpLayerComposition().clone();
+		l.remove(l.size()-1);		
+		return l.toArray(new Layer[0]);
+	}
+	
+	public ContextComposition getContexts() {
+		return contexts;
+	}	
+	
+	public void setContexts(ContextComposition comp) {
+		contexts = comp;		
+	}	
+
+	public void setActiveFor(Object o) {
+		for (Layer l : getLayer())
+			l.setActiveFor(o);
+	}
+
+	public void setInactiveFor(Object o) {
+		for (Layer l : getLayer())
+			l.setInactiveFor(o);
+	}
+
+	public Composition removeLayer(Layer _layer) {
+		Composition old = this.clone();
+		this.activatedLayers.remove(_layer);
+		this.deactivatedLayers.remove(_layer);
+		this.deactivatedLayers.add(0, _layer);
+		this.deactivated += _layer.toString();
+		return old;
+	}
+
+	public Composition removeLayerWithLogging(String loggerName, Layer _layer) {
+		Composition old = this.removeLayer(_layer);
+		LayerLogger.logLayerDeactivation(loggerName, new java.lang.String[] { _layer.toString() });
+		return old;
+	}
+	
+	
+	
+	public Layer next(Layer current) {
+//		
+		Layers composition = getTmpLayerComposition();	
+//		for (int i = 0; i < composition.size(); i++) {
+//			Layer _layer = composition.get(i);
+//			if (current.equals(_layer))
+//				return composition.get(i + 1);
+//		}
+//		return composition.get(0);		
+		
+		return composition.get(pos++);
+	}
+	
+	@Override()
+	public String toString() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("["); 
+		for (Layer _layer : getTmpLayerComposition()) {
+			buffer.append(_layer);
+			buffer.append(", ");
+		}
+		if (buffer.length() > 0)
+			buffer.delete(buffer.length() - 2, buffer.length());
+		buffer.append("]");
+		return buffer.toString();
+	}
+
+	@Override()
+	protected Composition clone() {
+		Composition clone = new Composition();
+		if (this.tmpActualLayers != null) {
+			clone.tmpActualLayers = (Layers) tmpActualLayers.clone();
+		}
+		clone.deactivated = this.deactivated;
+		clone.activatedLayers.addAll(this.activatedLayers);
+		clone.deactivatedLayers.addAll(this.deactivatedLayers);
+		//clone.activatedContextLayers.addAll(this.activatedContextLayers);
+		clone.contexts = this.getContexts();
+		//clone.parent_id = this.id;
+		return clone;
+	}
+
+	private static List<Layer> getImplicitlyActivatedLayers(Object target, Iterable<Layer> layerList) {
+		List<Layer> layers = new ArrayList<Layer>();
+		for (Layer l : layerList) {
+			if (l.isImplicitlyActive() || l.isActiveFor(target)) {
+				layers.add(l);
+			}
+		}
+		if (target instanceof LayerProvider)
+			layers.addAll(((LayerProvider) target).getLayers());
+		return layers;
+	}
+
+	private void invalidateComposition() {		
+		tmpActualLayers = null;
+	}
+	
+	
+	private boolean invalidated = true;
+	protected void invalidate() {
+		invalidated = true;
+	}
+
+	private Layers getTmpLayerComposition() {
+		if (invalidated || tmpActualLayers == null ) {
+			tmpActualLayers = buildTmpLayerComposition();
+			invalidated = false;
+		}
+		return tmpActualLayers;
+	}
+
+	private Layers buildTmpLayerComposition() {
+		Layers tmpList = new Layers();
+		tmpList.addAll(Arrays.asList(this.getStaticActiveLayers()));
+		tmpList.addAll(this.getDirectActivatedLayers());
+		tmpList.addAll(this.getContextActivatedLayers());		
+		tmpList.add(this.BASE);
+		return tmpList;
+	}
+
+
+
+	private List<Layer> getDirectActivatedLayers() {
+		//malte optimization :return new ArrayList<Layer>(this.activatedLayers);
+		return this.activatedLayers;
+	}
+
+	private List<Layer> getContextActivatedLayers() {
+		ArrayList<Layer> resultList = new ArrayList<Layer>();
+		resultList.addAll(getContexts().getActivatedLayers());
+		resultList.removeAll(this.activatedLayers);
+		resultList.removeAll(this.deactivatedLayers);
+		return resultList;
+	}
+	
+	
+	
+	static class LayerLogger {
+		
+		public static void logLayerActivation(String loggerName, String... layers) {
+			logLayer(loggerName, "activating layer", layers);
+		}
+
+		public static void logLayerDeactivation(String loggerName, String... layers) {
+			logLayer(loggerName, "deactivating layer", layers);
+		}
+		
+		private static void logLayer(String loggerName, String msg, String... layers) {
+			StringBuilder strBuilder = new StringBuilder(msg);
+			if (layers.length > 1) 
+				strBuilder.append("s");			
+			strBuilder.append(createLayerList(layers));
+			strBuilder.append("...");
+			log(loggerName, strBuilder.toString());			
+		}
+
+		private static StringBuffer createLayerList(String[] layers) {
+			StringBuffer buffer = new StringBuffer();
+			for (int i = 0; i < layers.length; ++i) {		
+				if (i > 0) 
+					buffer.append(",");				
+				buffer.append(" ").append(layers[i]);
+			}		
+			return buffer;
+		}
+
+		private static void log(String loggerName, String msg) {						
+			getLogger(loggerName).info(msg);		
+		}
+
+		private static Logger getLogger(String loggerName) {
+			return isEmptyString(loggerName)
+				? Logger.getAnonymousLogger()			 
+				:  Logger.getLogger(loggerName);			
+		}
+
+		private static boolean isEmptyString(String str) {
+			return str == null  || "".equals(str);
+		}
+	}
+	
+	public Layer[] getStaticActiveLayers() {
+		return Layer.getStaticActiveLayers();
+	}
+	
+	public static Class[] getLayerClasses() {
+		return current().firstLayer().getAllLayerClasses();
+	}
+	
+	
+
+}

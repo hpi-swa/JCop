@@ -1,0 +1,13 @@
+aspect EnhancedForToBytecodeFix { 
+
+	rewrite EnhancedForStmt {
+		   to ASTNode {	 	 	
+			   TypeDecl t = getVariableDeclaration().type();
+				if(t.isPrimitiveType()) {
+					Access boxed = t.boxed().createQualifiedAccess(); 
+					VariableDeclaration d = new VariableDeclaration(boxed, getVariableDeclaration().getID());
+					setVariableDeclaration(d);
+				}
+				return super.rewriteTo();
+	}}
+  } 

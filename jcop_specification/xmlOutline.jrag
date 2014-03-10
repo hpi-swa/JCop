@@ -1,0 +1,135 @@
+aspect xmlOutline {  
+  public void ASTNode.printOutline(StringBuffer s) { }
+  
+  public void CompilationUnit.printOutline(StringBuffer s) { 
+    s.append("<compilation_unit name=\"" + getPackageDecl() + "\">\n");
+	s.append("<package name=\"" + getPackageDecl() + "\" />\n");
+	s.append("<imports>\n");
+	for (ImportDecl decl : getImportDeclList()) 
+	  decl.printOutline(s);
+	s.append("</imports>\n");
+	s.append("<types>\n");	
+	for (TypeDecl decl : getTypeDecls()) 
+		decl.printOutline(s);	  	  
+    s.append("</types>\n");
+	s.append("</compilation_unit>\n");
+  }
+  
+  public void ImportDecl.printOutline(StringBuffer s) {    
+    s.append("<import kind=\"classOrPackage\" path=\"");
+    getAccess().toString(s);
+    s.append("\" />\n");
+	}
+  
+//	public void LayerImportDecl.printOutline(StringBuffer s) { 
+//        s.append("<import kind=\"layer\" path=\"" + getAccess().toString() + "\" />\n");
+//	}
+  
+  public void PartialMethodDecl.printOutline(StringBuffer s) { 
+	s.append("<partial_method name=\"" + getNamePattern() + "\"" +  
+			" proceed=\"" + getID() + "\"" +
+     			" type=\"" + type().name() + "\"" +
+     			" line=\"" + sourceLineNumber() + "\" >\n");
+	getModifiers().printOutline(s);	
+	s.append("<params>\n"); 
+	for (ParameterDeclaration decl : getParameters())
+	  decl.printOutline(s);
+	s.append("</params>\n"); 
+	s.append("</partial_method>\n"); 
+   }
+
+   public void LayerDecl.printOutline(StringBuffer s) { 
+    s.append("<layer name=\"" + getID() + "\" line=\"" + sourceLineNumber() + "\">\n");
+	for (BodyDecl decl : getBodyDecls())
+	  decl.printOutline(s);
+    s.append("</layer>\n"); 
+  }
+  
+     public void OpenLayerDecl.printOutline(StringBuffer s) { 
+    s.append("<layer name=\"" + getID() + "\" line=\"" + sourceLineNumber() + "\">\n");
+	for (BodyDecl decl : getBodyDecls())
+	  decl.printOutline(s);
+    s.append("</layer>\n"); 
+  }
+  public void ClassDecl.printOutline(StringBuffer s) { 
+	s.append("<class name=\"" + name() + "\" line=\"" + sourceLineNumber() + "\">\n");
+	getModifiers().printOutline(s);
+	s.append("<declarations>\n");
+	for (BodyDecl decl : getBodyDecls())
+	  decl.printOutline(s);
+	s.append("</declarations>\n");
+	s.append("</class>\n"); 
+  }
+  
+//  public void LayerInClass.printOutline(StringBuffer s) { 
+//    s.append("<layer name=\"" + getID() + "\" line=\"" + sourceLineNumber() + "\">\n");
+//	for (BodyDecl decl : getBodyDecls())
+//	  decl.printOutline(s);
+//    s.append("</layer>\n"); 
+//  }
+  
+  
+  public void ConstructorDecl.printOutline(StringBuffer s) { 
+	s.append("<constructor line=\"" + sourceLineNumber() + "\">\n");
+	getModifiers().printOutline(s);	
+	s.append("<params>\n"); 
+	for (ParameterDeclaration decl : getParameters())
+	  decl.printOutline(s);
+	s.append("</params>\n"); 
+	s.append("</constructor>\n"); 
+  }
+  
+  
+  public void MethodDecl.printOutline(StringBuffer s) { 
+	s.append("<method name=\"" + getID() + "\" type=\"" + type().name() + "\" line=\"" + sourceLineNumber() + "\" encl_type=\"" + hostType().getFullQualifiedName()+ "\">\n");	
+	
+				
+	
+	getModifiers().printOutline(s);	
+	s.append("<params>\n"); 
+	for (ParameterDeclaration decl : getParameters())
+	  decl.printOutline(s);
+	s.append("</params>\n"); 
+	s.append("</method>\n"); 
+  }
+  
+  public void ParameterDeclaration.printOutline(StringBuffer s) { 
+	s.append("<param type=\"" + type().name() + "\" />\n");
+  }
+  		
+	public String TypeDecl.getFullQualifiedName() {
+		return fullName();
+	}
+	public String PrimitiveType.getFullQualifiedName() {
+		return name();
+	}
+	public String VoidType.getFullQualifiedName() {
+		return name();
+	}
+	
+			/*StringBuffer b = new StringBuffer();
+			if (!isPrimitiveType() && !isVoid())
+				b.append(packageName()).append('.');
+			
+			b.append(name());
+			return b.toString();
+		}*/
+
+  public void Modifiers.printOutline(StringBuffer s) { 
+	s.append("<modifiers>\n");
+	for (Modifier m : getModifiers())
+		m.printOutline(s);
+	s.append("</modifiers>\n");
+  }
+  
+  public void Modifier.printOutline(StringBuffer s) { 
+	s.append("<modifier name=\"" + getID() + "\" />");
+  }
+  
+  public void FieldDeclaration.printOutline(StringBuffer s) { 
+	s.append("<field name=\"" + getID() + "\" type=\""+ type().name() +"\" line=\"" + sourceLineNumber() + "\" encl_type=\"" + hostType().getFullQualifiedName()+ "\">\n");
+	getModifiers().printOutline(s);	
+	s.append("</field>\n");
+  }
+
+}

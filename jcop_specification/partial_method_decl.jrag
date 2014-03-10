@@ -1,0 +1,203 @@
+aspect LocalPartialMethodDecl {
+
+//  rewrite PartialMethodDecl { 
+//    to ASTNode { 
+//    	if(jcop.compiler.CompilerConfiguration.getInstance().astTransformationsDisabled())
+//			return super.rewriteTo();
+//	 List<Expr> args = new jcop.generation.Generator().generateArgs(getParameterList());
+//      //String proceedOrder = getProceedOrder();
+//      Block block = null;
+////      if (proceedOrder.equals(jcop.Globals.Keywords.beforeMethod))
+////    	  block = jcop.transformation.PartialMethodTransformer.getBlockForBeforeMethod(this);
+////      else if (proceedOrder.equals(jcop.Globals.Keywords.afterMethod))
+////    	  block = jcop.transformation.PartialMethodTransformer.getBlockForAfterMethod(this);
+////      else
+////    	  System.out.println("wrong proceed keyword: '" + proceedOrder + "'");  
+//	
+//	  return new MethodDecl(
+//			  getModifiers().fullCopy(),
+//			  (Access)getTypeAccess().fullCopy(),
+//			  getID(),
+//			  getParameterList().fullCopy(),
+//			  getExceptionList().fullCopy(),
+//			  new Opt<Block>(block)		 
+//	  );
+//    }}
+	  
+	   public TypeDecl PartialMethodDecl.hostType() {
+		 NamePattern p = getNamePatternNoTransform();		
+		 if (p instanceof DotNamePattern) {	 
+			  NamePattern typePattern = ((DotNamePattern)p).getLhs();			
+			 TypeDecl found =  lookupHostType(typePattern);		
+			 return found;
+		 }
+		 jcop.compiler.JCopCompiler.abort(sourceFile(), sourceLineNumber(), "Cannot find base declaration for partial method: %s in %s", p , getEnclosingLayer().getFullQualifiedName() );
+		 return null;
+	  }  
+	  
+    private LayerDecl PartialMethodDecl.getEnclosingLayer() {
+		try {
+			return ((LayerDecl)parent.parent);
+		}
+		catch(ClassCastException e) {    			
+			jcop.compiler.JCopCompiler.abort(sourceFile(), sourceLineNumber(), "Enclosing type declaration of partial method '%s' is not a layer declaration!", getID() );
+			return null;
+		}
+   }
+   
+    private ClassDecl PartialMethodDecl.lookupHostType(NamePattern typePattern) {    	
+    	if (typePattern instanceof DotNamePattern) {    		
+			 DotNamePattern dtp = (DotNamePattern)typePattern;			 
+			 String pckg = dtp.getLhs().toString();			
+			 String typeName = dtp.getRhs().toString();			 
+			 ClassDecl type = (ClassDecl)lookupType(pckg, typeName);			 
+			 if (type != null)  {			
+				 return type; 
+			 }
+								
+			 ClassDecl host = lookupHostType(dtp.getLhs());
+			 if (host != null) {		
+				 for (BodyDecl element : host.getBodyDecls()) {
+					 if(element instanceof MemberClassDecl) {					 
+						 ClassDecl nestedType = ((MemberClassDecl)element).getClassDecl();					
+						 if (nestedType.getID().equals(typeName)) {							 
+							 return nestedType;
+						 }
+					 }			 
+				 }
+			 }
+    	}
+		jcop.compiler.JCopCompiler.abort(sourceFile(), sourceLineNumber(), jcop.Globals.Msg.pmdHostNotFound, getNamePattern() );
+		return null;    	
+			
+		// TODO Auto-generated method stub
+		
+	}
+  
+  	public String PartialMethodDecl.getProceedOrder() {
+		for (Modifier modifier : getModifiers().getModifierList())
+			if (isPreceedenceModifier(modifier))
+				return modifier.getID();
+		return "";
+	}
+
+	private boolean PartialMethodDecl.isPreceedenceModifier(Modifier modifier) {
+		String id = modifier.getID();
+		return id.equals("before") || id.equals("after");
+	}
+
+    public String PartialMethodDecl.signature() {    	
+    	StringBuffer s = new StringBuffer();
+    	String name = getNamePattern().toString();    	
+    	name = name.substring(name.lastIndexOf(".") + 1);    	
+    	s.append(name);
+    	s.append("(");
+    	for(int i = 0; i < getNumParameter(); i++) {
+    		if(i != 0) s.append(", ");
+    	    s.append(getParameter(i).type().erasure().typeName());
+    	}
+        s.append(")");    	  			
+  		return s.toString();
+  	}
+
+	public String PartialMethodDecl.getID() {	
+	    	String fqn = getNamePattern().toString();
+	    	String id = fqn.substring(fqn.lastIndexOf(".") + 1);
+	    	return id;	      	
+	    }
+	
+
+	    public String PartialMethodDecl.name() {
+	      	return getNamePattern().toString();
+	    }
+
+
+	public void PartialMethodDecl.toString(StringBuffer s) {
+		s.append(indent());
+		getModifiers().toString(s);
+		getTypeAccess().toString(s);
+		s.append(" ");
+		getNamePattern().toString(s);
+		s.append("("); 
+		if(getNumParameter() > 0) {
+		  getParameter(0).toString(s);
+		  for(int i = 1; i < getNumParameter(); i++) {
+			s.append(", ");
+			getParameter(i).toString(s);
+		  }
+		}
+		s.append(")");
+		if(getNumException() > 0) {
+		  s.append(" throws ");
+		  getException(0).toString(s);
+		  for(int i = 1; i < getNumException(); i++) {
+			s.append(", ");
+			getException(i).toString(s);
+		  }
+		}
+		if(hasBlock()) {
+		  s.append(" ");
+		  getBlock().toString(s);
+		}
+		else {
+		  s.append(";\n");
+		}
+	  }
+	
+//	 public boolean MethodDecl.isPartialMethod() {
+//		  return (parent.parent instanceof LayerDecl);	  		
+//	  }
+
+
+  public boolean MethodDecl.isPartialMethod() {
+	   // is it a layer local method?
+	   if(parent.parent instanceof LayerDecl)
+		   return false;
+	   
+	  return (parent.parent instanceof LayerDeclaration) &&
+	  !getModifiers().contains(jcop.Globals.Types.DELEGATION_METHOD_ANNOTATION);	  		
+  }
+  
+    public TypeDecl MethodDecl.declaringType() {	  
+	  if (isPartialMethod()) 		  
+		  return jcop.transformation.lookup.Lookup.lookupLayerClassDecl((LayerDeclaration)parent.parent);	  
+	  else 
+		  return hostType();		  
+  }
+  
+   public boolean PartialMethodDecl.isPartialMethod() {
+   		return true;
+   }
+   
+   
+   public String MemberDecl.getFullQualifiedName() {
+     	return hostType().getFullQualifiedName();   
+     }
+      
+   
+   public String MethodDecl.getFullQualifiedName() {    
+   	return super.getFullQualifiedName() + "." + signature();
+   }
+
+   public String FieldDeclaration.getFullQualifiedName() {
+	   return super.getFullQualifiedName() + "." + getID();  
+     }
+   
+   
+  refine NameCheck public void MethodDecl.nameCheck() {
+    // 8.4
+    // 8.4.2
+    if(!hostType().methodsSignature(signature()).contains(this) && !isPartialMethod())
+      error("method with signature " + signature() + " is multiply declared in type " + hostType().typeName());
+    // 8.4.3.4
+    if(isNative() && hasBlock())
+      error("native methods must have an empty semicolon body");
+    // 8.4.5
+    if(isAbstract() && hasBlock())
+      error("abstract methods must have an empty semicolon body");
+    // 8.4.5
+    if(!hasBlock() && !(isNative() || isAbstract()))
+      error("only abstract and native methods may have an empty semicolon body");
+  }
+
+}

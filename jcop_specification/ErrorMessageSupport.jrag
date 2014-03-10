@@ -1,0 +1,47 @@
+aspect ErrorMessageSupport {
+//   public CompilationUnit PathPart.getCompilationUnit() {
+//      long startTime = System.currentTimeMillis();
+//      if(!isSource) {
+//        try {
+//          if(Program.verbose())
+//            System.out.print("Loading .class file: " + fullName + " ");
+//
+//          CompilationUnit u = program.bytecodeReader.read(is, fullName, program);
+//          //CompilationUnit u = new bytecode.Parser(is, fullName).parse(null, null, program);
+//          u.setPathName(pathName);
+//          u.setRelativeName(relativeName);
+//          u.setFromSource(false);
+//          
+//          is.close();
+//          is = null;
+//          
+//          if(Program.verbose())
+//            System.out.println("from " + pathName + " in " + (System.currentTimeMillis() - startTime) + " ms");
+//          return u;
+//        } catch (Exception e) {
+//          throw new Error("Error loading " + fullName, e);
+//        }
+//      } 
+//      else {
+//        try {  
+//          if(Program.verbose())
+//            System.out.print("Loading .java file: " + fullName + " ");
+//            
+//          CompilationUnit u = program.javaParser.parse(is, fullName);
+//          is.close();
+//          is = null;
+//          
+//          u.setPathName(pathName);
+//          u.setRelativeName(relativeName);
+//          u.setFromSource(true);
+//
+//          if(Program.verbose())
+//            System.out.println("in " + (System.currentTimeMillis() - startTime) + " ms");
+//          return u;
+//        } catch (Exception e) {
+//          System.err.println("Unexpected error of kind " + e.getClass().getName());
+//          throw new Error(fullName + ": " + e.getMessage(), e);
+//        }
+//      }
+//    }
+}

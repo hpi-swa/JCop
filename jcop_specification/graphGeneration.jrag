@@ -1,0 +1,164 @@
+aspect graphGeneration {  
+
+  // ast
+  public jcop.output.graph.INode ASTNode.createGraphNode() {
+    return jcop.output.graph.GraphGeneratorFactory.getInstance().visit(this);
+  }
+  
+  
+  public jcop.output.graph.INode InstanceInitializer.createGraphNode() {
+	    return jcop.output.graph.GraphGeneratorFactory.getInstance().visit(this);
+ }
+  
+  public jcop.output.graph.INode OpenLayerDecl.createGraphNode() {
+	    return jcop.output.graph.GraphGeneratorFactory.getInstance().visit(this);
+ }
+  
+  public jcop.output.graph.INode ClassDecl.createGraphNode() {
+  	return jcop.output.graph.GraphGeneratorFactory.getInstance().visit(this);	 
+  }
+  
+  public jcop.output.graph.INode CompilationUnit.createGraphNode() {
+  	return jcop.output.graph.GraphGeneratorFactory.getInstance().visit(this);	 
+  }
+  
+  public jcop.output.graph.INode MethodDecl.createGraphNode() {
+  	return jcop.output.graph.GraphGeneratorFactory.getInstance().visit(this);	 
+  }
+  
+  public jcop.output.graph.INode FieldDeclaration.createGraphNode() {
+  	return jcop.output.graph.GraphGeneratorFactory.getInstance().visit(this);	 
+  }  
+  
+  public jcop.output.graph.INode ConstructorDecl.createGraphNode() {
+  	return jcop.output.graph.GraphGeneratorFactory.getInstance().visit(this);	 
+  }
+  
+  public jcop.output.graph.INode MemberClassDecl.createGraphNode() {
+  	return jcop.output.graph.GraphGeneratorFactory.getInstance().visit(this);	 
+  }
+  
+  // ast / stmt
+  public jcop.output.graph.INode Stmt.createGraphNode() {
+  	return jcop.output.graph.GraphGeneratorFactory.getInstance().visit(this);	 
+  }
+  
+  public jcop.output.graph.INode IfStmt.createGraphNode() {
+  	return jcop.output.graph.GraphGeneratorFactory.getInstance().visit(this);	 
+  }  
+  
+  public jcop.output.graph.INode ReturnStmt.createGraphNode() {
+  	return jcop.output.graph.GraphGeneratorFactory.getInstance().visit(this);	 
+  }
+  
+  // print stmt?
+    
+  public jcop.output.graph.INode ExprStmt.createGraphNode() {
+  	return jcop.output.graph.GraphGeneratorFactory.getInstance().visit(this);	 
+  }  
+  
+  public jcop.output.graph.INode ParameterDeclaration.createGraphNode() {
+  	return jcop.output.graph.GraphGeneratorFactory.getInstance().visit(this);	 
+  }
+    
+  // ast / stmt / expression
+  public jcop.output.graph.INode Expr.createGraphNode() {
+  	return jcop.output.graph.GraphGeneratorFactory.getInstance().visit(this);	 
+  }
+  
+  public jcop.output.graph.INode MethodAccess.createGraphNode() {
+  	return jcop.output.graph.GraphGeneratorFactory.getInstance().visit(this);	 
+  } 
+  
+  public jcop.output.graph.INode ClassInstanceExpr.createGraphNode() {
+  	return jcop.output.graph.GraphGeneratorFactory.getInstance().visit(this);	 
+  }
+
+  public jcop.output.graph.INode AssignExpr.createGraphNode() {
+  	return jcop.output.graph.GraphGeneratorFactory.getInstance().visit(this);	 
+  }
+    
+  public jcop.output.graph.INode Binary.createGraphNode() {
+  	return jcop.output.graph.GraphGeneratorFactory.getInstance().visit(this);	 
+  }
+
+  public jcop.output.graph.INode Unary.createGraphNode() {
+  	return jcop.output.graph.GraphGeneratorFactory.getInstance().visit(this);	 
+  }  
+
+  public jcop.output.graph.INode VariableDeclaration.createGraphNode() {
+  	return jcop.output.graph.GraphGeneratorFactory.getInstance().visit(this);	 
+  }  
+
+  // ast / stmt / expression / reference
+  public jcop.output.graph.INode Access.createGraphNode() {
+  	return jcop.output.graph.GraphGeneratorFactory.getInstance().visit(this);	 
+  }
+  
+  public jcop.output.graph.INode TypeAccess.createGraphNode() {
+  	return jcop.output.graph.GraphGeneratorFactory.getInstance().visit(this);	 
+  }
+  
+  
+  public jcop.output.graph.INode VarAccess.createGraphNode() {
+  	return jcop.output.graph.GraphGeneratorFactory.getInstance().visit(this);	 
+  }  
+  
+  public jcop.output.graph.INode ThisAccess.createGraphNode() {
+  	return jcop.output.graph.GraphGeneratorFactory.getInstance().visit(this);
+  }
+  
+  public jcop.output.graph.INode Dot.createGraphNode() {
+  	return jcop.output.graph.GraphGeneratorFactory.getInstance().visit(this);	 
+  }
+  
+  // ast / stmt / expression / literals
+  public jcop.output.graph.INode Literal.createGraphNode() {
+  	return jcop.output.graph.GraphGeneratorFactory.getInstance().visit(this);	 
+  }    
+  public jcop.output.graph.INode StringLiteral.createGraphNode() {
+  	return jcop.output.graph.GraphGeneratorFactory.getInstance().visit(this);	 
+  }
+  
+  public jcop.output.graph.INode IntegerLiteral.createGraphNode() {
+  	return jcop.output.graph.GraphGeneratorFactory.getInstance().visit(this);	 
+  }  
+  
+  public jcop.output.graph.INode BooleanLiteral.createGraphNode() {
+  	return jcop.output.graph.GraphGeneratorFactory.getInstance().visit(this);	 
+  }  
+  
+  public jcop.output.graph.INode NullLiteral.createGraphNode() {
+  	return jcop.output.graph.GraphGeneratorFactory.getInstance().visit(this);	 
+  } 
+  
+  // JCOP
+  public jcop.output.graph.INode ProceedExpr.createGraphNode() {
+  	return jcop.output.graph.GraphGeneratorFactory.getInstance().visit(this);	 
+  }
+  
+  public jcop.output.graph.INode ContextDecl.createGraphNode() {
+  	return jcop.output.graph.GraphGeneratorFactory.getInstance().visit(this);	 
+  }
+  
+  public jcop.output.graph.INode ContextConstraint.createGraphNode() {
+  	return jcop.output.graph.GraphGeneratorFactory.getInstance().visit(this);	 
+  }
+  
+  public jcop.output.graph.INode PointcutExpr.createGraphNode() {
+  	return jcop.output.graph.GraphGeneratorFactory.getInstance().visit(this);	 
+  }    
+  
+  public jcop.output.graph.INode LayerDecl.createGraphNode() {
+  	return jcop.output.graph.GraphGeneratorFactory.getInstance().visit(this);	 
+  }    
+  
+  public jcop.output.graph.INode LayerActivation.createGraphNode() {
+  	return jcop.output.graph.GraphGeneratorFactory.getInstance().visit(this);	 
+  }    
+
+  public jcop.output.graph.INode PartialMethodDecl.createGraphNode() {
+  	return jcop.output.graph.GraphGeneratorFactory.getInstance().visit(this);	 
+  }      
+                                 
+}

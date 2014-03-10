@@ -1,0 +1,37 @@
+aspect ContextDecl {
+  syn boolean ContextDecl.isPublic() = true;
+
+  public void ContextDecl.toString(StringBuffer s) {
+     s.append("context ");
+     s.append(getID());
+     s.append(" { \n");
+     indent++;
+     getContextConstraintList().toString(s);
+     for (BodyDecl bodyDecl : getBodyDecls()) {
+        bodyDecl.toString(s);
+     }
+     indent--;
+     s.append(indent() + "}\n");
+  }
+
+  public  List<DLALayerActivation> ContextDecl.getLayerActivations() {
+	  return getContextConstraint().
+		getLayerActivationBlockNoTransform().
+			getDLALayerActivationListNoTransform();
+  }
+
+  public  ContextConstraint ContextDecl.getContextConstraint() {
+	  return getContextConstraintListNoTransform().getChild(0);
+  }	
+ 
+
+  rewrite ContextDecl {
+    to ASTNode {
+//    	jcop.jcopaspect.AspectProvider.getInstance().
+//    		add(new jcop.jcopaspect.ContextAspect(this));
+    	if(jcop.compiler.CompilerConfiguration.getInstance().astTransformationsDisabled())
+			return super.rewriteTo();
+    	return new jcop.transformation.ContextTransformer(this).errorCheckAndTransform(compilationUnit());
+  } }
+
+}  

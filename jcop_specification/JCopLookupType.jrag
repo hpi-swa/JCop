@@ -1,0 +1,26 @@
+aspect JCopLookupTypes {
+	
+//	refine LookupType eq CompilationUnit.getChild().lookupType(String name) {
+//		SimpleSet set = LookupType.CompilationUnit.getChild().lookupType(name);
+//		if (set == null) {
+//		    result = lookupType("jcop.lang", name);
+//		    if(result != null && result.accessibleFromPackage(packageName()))
+//		      return SimpleSet.emptySet.add(result);
+//		    
+//		    return lookupType(name);
+//		}
+//	}
+//	
+	refine Generics eq CompilationUnit.getChild().lookupType(String name) {
+		SimpleSet result = Generics.CompilationUnit.getChild().lookupType(name);
+		if (result.isEmpty()) {
+		    SimpleSet jcopTypeResult = lookupType("jcop.lang", name);
+		    if(jcopTypeResult != null)
+		      return SimpleSet.emptySet.add(jcopTypeResult);
+		}    
+		return result;
+	}	
+	
+	
+	
+}

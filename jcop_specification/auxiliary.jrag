@@ -1,0 +1,62 @@
+aspect Auxiliary {
+
+	
+	  public String List.toString() {
+		  StringBuffer b = new StringBuffer();
+		  toString(b);
+		  return b.toString();
+	  }
+	  
+	  public void ThisLayerAccess.toString(StringBuffer s) {
+	       s.append("thislayer");
+	    }
+	  
+//	  public void SuperLayerAccess.toString(StringBuffer s) {
+//	       s.append("thislayer.superlayer");
+//	    }
+	   
+	  public void List.toString(StringBuffer b) {	
+		  for (int i = 0; i < numChildren(); i++) {
+				if (i > 0) b.append(", ");
+				getChild(i).toString(b);
+		  }
+	  }
+	  
+	  @Override
+	    public void ConcreteFormalPattern.toString(StringBuffer s) {
+	    	getPattern().toString(s);    	
+	    }
+	  
+	  
+	  public String Annotation.getID() {
+	  	String id = super.getID();
+	  	if (id.equals("annotation"))
+	  		id = type().getID();
+	  	return id;
+	  }
+	  
+	   public void ObjectSpecificLayerActivation.toString(StringBuffer s) {
+		      getTarget().toString(s);   
+			  s.append(" with (");
+			  for(Expr arg : getArgs()) {
+			    arg.toString(s);
+			    s.append(", ");
+			  }
+			  if (getArgs().numChildren() > 0)
+				  s.delete(s.length()-2, s.length());
+			  s.append(")");		
+			}   
+	  
+	  public String TypeAccess.toString() {
+		  return typeName();
+	  }
+	  
+	  public boolean Modifiers.contains(String id) {
+			for (Modifier modifier : getModifiers()) {
+				if (modifier.getID().equals(id))
+					return true;
+			}
+			return false;
+		}
+
+}

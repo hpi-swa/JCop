@@ -1,0 +1,18 @@
+aspect ThisLayerAccess {
+  
+  rewrite ThisLayerAccess  {
+    to ASTNode {
+    	if(jcop.compiler.CompilerConfiguration.getInstance().astTransformationsDisabled())
+			return super.rewriteTo();
+    	return new VarAccess(getID());
+  } }
+  
+  
+  rewrite SuperProceedExpr  {
+	    to ASTNode {
+	    	if(jcop.compiler.CompilerConfiguration.getInstance().astTransformationsDisabled())
+				return super.rewriteTo();
+	    	return new VarAccess("thislayer");
+	  } }
+
+}  

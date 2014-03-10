@@ -1,0 +1,119 @@
+// ============================================================
+// JCop Language Specification: Abstract Syntax
+//
+// Malte Appeltauer
+// Software Architecture Group, Hasso-Plattner-Institute
+// ============================================================
+// ------------------------------------------------------------
+// layer
+// ------------------------------------------------------------
+//LayerInClass:MemberDecl ::=
+//   <ID:String> 
+//   TypeAccess:Access 
+//   BodyDecl* ;   
+//ClassInLayer:TypeDecl ::= 
+//   <ID:String> 
+//   BodyDecl* ;
+   
+LayerDecl : ClassDecl ::=
+   Modifiers <ID:String> SubjectTypes:Access* [SuperClassAccess:Access]  BodyDecl*;   
+
+OpenLayerDecl : MemberDecl ::= 
+   TypeName:Access BodyDecl*;      
+      
+//SubjectLayerDecl : LayerDecl ::= 
+   //Modifiers <ID:String> [SuperClassAccess:Access] Implements:Access* SubjectTypeAccess:Access BodyDecl* ;
+
+// ------------------------------------------------------------
+// behavioral variations
+// ------------------------------------------------------------
+//abstract PartialMethodDecl:MethodDecl;
+
+
+//Modifiers TypeAccess:Access <ID:String> Parameter:ParameterDeclaration* Exception:Access* [Block];
+
+PartialMethodDecl:MethodDecl ::=   
+   //Modifiers 
+   //TypeAccess:Access
+   NamePattern:NamePattern 
+   //Parameter:ParameterDeclaration* 
+   //Exception:Access* 
+   //[Block] ;
+   ;
+
+/*LocalPartialMethodDecl:PartialMethodDecl ::=   
+   Modifiers 
+   TypeAccess:Access 
+   <ID:String> 
+   Parameter:ParameterDeclaration* 
+   Exception:Access* 
+   [Block] ;*/
+   
+ProceedExpr:Access ::= 
+   Arg:Expr* ; 
+   
+SuperProceedExpr:ProceedExpr ::= 
+  Arg:Expr* ;
+
+// ------------------------------------------------------------
+// layer import declaration
+// ------------------------------------------------------------
+LayerImportDecl : SingleTypeImportDecl; //::= <ID:String> ;
+   
+   
+
+// ------------------------------------------------------------
+// context type
+// ------------------------------------------------------------ 
+
+ContextDecl:ClassDecl ::=
+   <ID:String> 
+   ContextConstraint*;
+
+
+//ContextDecl:TypeDecl ::= 
+//   <ID:String> 
+//   ContextDeclBlock;
+//ContextDeclBlock:Block ::=
+//   ContextConstraint* ;
+
+ContextBodyBlock:Block ::=
+   Constraint:ContextConstraint*
+   BodyElelemt:BodyDecl* ;
+
+ContextConstraint ::= 
+   ConstraintDefinition:PointcutExpr
+   LayerActivationBlock ;
+ 
+LayerActivationBlock:Block ::=
+   DLALayerActivation* ;
+   
+DLALayerActivation ::= 
+   Arg:Expr*
+   <Activation:boolean> ;
+
+   
+// ------------------------------------------------------------
+// layer activation
+// ------------------------------------------------------------
+
+LayerActivation:Stmt ::= 
+   Arg:Expr* 
+   Block 
+   <Activation:boolean> ;
+
+ObjectSpecificLayerActivation:Stmt ::= 
+   Target:Expr 
+   Arg:Expr* 
+   <Activation:boolean> ;
+   
+   
+// ------------------------------------------------------------
+// fancy stuff
+// ------------------------------------------------------------   
+ThisLayerAccess : Access ::= 
+  <ID:String> ;
+  
+
+  
+   
