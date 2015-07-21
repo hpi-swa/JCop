@@ -32,11 +32,11 @@ public class CompilerMessageStream {
 	}
 	
 	public boolean logMode() {
-		return Program.hasOption(CompilerOps.compiletimeLogging);
+		return CompilerConfiguration.getInstance().hasOption(CompilerOps.compiletimeLogging);
 	}
 	
 	public boolean compileTimeLogMode() {	
-		return Program.hasOption(Globals.CompilerOps.compiletimeLogging);
+		return CompilerConfiguration.getInstance().hasOption(Globals.CompilerOps.compiletimeLogging);
 	}
 
 	

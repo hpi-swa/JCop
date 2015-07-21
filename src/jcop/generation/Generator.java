@@ -33,10 +33,11 @@ import AST.TypeAccess;
 import AST.TypeDecl;
 import AST.VarAccess;
 
-public class Generator {	
-	  public Annotation genAnnotation(String name)  {
+public class Generator {
+	protected static int activeLayerCounter = 0;	
+	public Annotation genAnnotation(String name)  {
 	    return new Annotation(name, JCopTypes.JCopAccess.get(name), new List());
-	  }
+	}
 
 	public  Modifiers genModifiers(String ... modifiers) {
 		Modifiers m = new Modifiers();
@@ -90,7 +91,7 @@ public class Generator {
 		for (Expr element : elements)
 			list.add(element);
 		return list;
-}
+	}
 
 //	public List<ParameterDeclaration> genList(ParameterDeclaration... elements) {
 //		List<ParameterDeclaration> list = new List<ParameterDeclaration>();
@@ -129,7 +130,7 @@ public class Generator {
 		TypeAccess system = new TypeAccess("java.lang", "System");
 		Access out = system.qualifiesAccess(new VarAccess("out"));
 		Access println = out.qualifiesAccess(
-				createCompositionMethodAccess("println", new StringLiteral(string)));		
+			createCompositionMethodAccess("println", new StringLiteral(string)));		
 		return new ExprStmt(println);
 	}
 	
@@ -166,15 +167,15 @@ public class Generator {
 	    if (!newModifier.contains(PUBLIC))
 	    	newModifier.addModifier(new Modifier(PUBLIC));
 	    return newModifier;
-	  }
+	}
 	
 	
 
 	public Modifiers removeModifiers(Modifiers oldModifier,	String... toBeRemoved) {
-	   Modifiers m = new Modifiers();
+		Modifiers m = new Modifiers();
 	    for (Modifier modifier : oldModifier.getModifierList()) {
-	      if (!arrayContains(toBeRemoved, modifier.getID()))
-	        m.addModifier(modifier);	   
+			if (!arrayContains(toBeRemoved, modifier.getID()))
+				m.addModifier(modifier);	   
 	    }	 
 	    return m;
 	}
@@ -202,9 +203,9 @@ public class Generator {
 	public List<Expr> generateArgs(List<ParameterDeclaration> params) {
 		List<Expr> args = new List<Expr>();		
 		for (int y = 0; y < params.getNumChild(); y++) 		
-		  args.add(new VarAccess(params.getChild(y).getID()));	    
+			args.add(new VarAccess(params.getChild(y).getID()));	    
 		return args;
-	 }
+	}
 	
 	public String createFullQualifiedSignature(MethodDecl method){		
 		StringBuffer buffer = new StringBuffer();

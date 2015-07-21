@@ -1,0 +1,44 @@
+aspect PartialMethodTable{
+
+	// Only this attribute doesn't depend on Partial Method Table
+    // classdecl.methodsSignature() include super methods.
+	public MethodDecl PartialMethodDecl.getBaseMethodForPMT(){
+		TypeDecl c = hostType();
+		SimpleSet methods = c.methodsSignature(signature());
+		
+		if(!methods.isEmpty()){
+			return (MethodDecl)methods.iterator().next();
+		}
+		return null;
+	}
+
+	// public void Program.addCompilationUnitCreatingPMT(CompilationUnit u){
+	// 	addCompilationUnit(u);
+	// 	u.createPartialMethodTable();
+	// }
+	
+	public void ASTNode.createPartialMethodTable(){
+		if(this instanceof PartialMethodDecl){
+			// for base method
+			PartialMethodDecl pm = (PartialMethodDecl)this;
+			if(LookupCopMembers.getInstance().getSameSignatureMethodsTable(pm) == null){
+				MethodDecl md = pm.getBaseMethodForPMT();
+				if(md != null){
+					LookupCopMembers.getInstance().addMethod(md);
+				}
+			}
+			LookupCopMembers.getInstance().addMethod(pm);
+		}else if(this instanceof LayerDecl){
+			LookupCopMembers.getInstance().addLayer((LayerDecl)this);
+		}
+		// if(this instanceof LayerDecl | this instanceof ClassDecl | this instanceof OpenLayerDecl | 
+		// 	this instanceof BodyDecl | this instanceof CompilationUnit | this instanceof Program){
+			for(int i = 0; i < getNumChildNoTransform(); i++) {
+				getChildNoTransform(i).createPartialMethodTable();
+			}
+		// }
+	}
+
+	eq PartialMethodDecl.getBlock().lookupMethod(String name) = hostType().unqualifiedLookupMethod(name);
+
+}

@@ -7,6 +7,7 @@ import jcop.Globals;
 import jcop.Globals.GraphFiles;
 import jcop.Globals.CompilerOps;
 import jcop.Globals.Msg;
+import jcop.compiler.CompilerConfiguration;
 import AST.Program;
 import agg.editor.impl.EdGraGra;
 import agg.util.XMLHelper;
@@ -134,8 +135,8 @@ public class AggUtils {
 	}
 	
 	private String createWorkingDir() {
-		return Program.hasValueForOption(CompilerOps.sourcepath)
-						? Program.getValueForOption(CompilerOps.sourcepath)
+		return CompilerConfiguration.getInstance().hasValueForOption(CompilerOps.sourcepath)
+						? CompilerConfiguration.getInstance().getValueForOption(CompilerOps.sourcepath)
 						:  System.getProperty("user.dir");
 	}
 }

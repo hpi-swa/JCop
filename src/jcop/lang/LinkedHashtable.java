@@ -40,7 +40,7 @@ public class LinkedHashtable<Key extends java.lang.Object, Value extends java.la
 			put(key, new LinkedList<Value>());
 	}
 
-	public synchronized LinkedList<Value> remove(Key key, Value value) {
+	public synchronized LinkedList<Value> myremove(/*Key*/Object key, /*Value*/Object value) {
 		LinkedList<Value> set = get(key);
 		set.remove(value);
 		return set;
@@ -63,7 +63,7 @@ public class LinkedHashtable<Key extends java.lang.Object, Value extends java.la
 		super();
 	}
 
-	public void merge(LinkedHashtable toBeMerged) {
+	public void merge(LinkedHashtable<Key,Value> toBeMerged) {
 		Enumeration<Key> keys = toBeMerged.keys();
 		while (keys.hasMoreElements()) {
 			Key current = keys.nextElement();			

@@ -5,6 +5,7 @@ import java.io.File;
 
 import jcop.Globals;
 import jcop.Globals.CompilerOps;
+import jcop.compiler.CompilerConfiguration;
 import jcop.compiler.JCopTypes;
 import jcop.compiler.JCopTypes.JCopAccess;
 import jcop.compiler.filecopy.FileGenerationHandler;
@@ -29,8 +30,8 @@ public class SourceCodeGenerator {
 	
 	private File createBasePath() {
 		String path = 
-			Program.hasValueForOption(Globals.CompilerOps.dumpSources)
-				? Program.getValueForOption(Globals.CompilerOps.dumpSources)
+			CompilerConfiguration.getInstance().hasValueForOption(Globals.CompilerOps.dumpSources)
+				? CompilerConfiguration.getInstance().getValueForOption(Globals.CompilerOps.dumpSources)
 				:  "*dump*";
 		return new File(path); 
 	}

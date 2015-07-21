@@ -71,7 +71,8 @@ public class ArgumentParser {
 
 	private void addSourcepath(List<String> args, String string) {
 		args.add(CompilerOps.sourcepath);
-		args.add(".");		
+		args.add(string);
+		//args.add(".");		
 	}
 
 	private String readFilePath() {

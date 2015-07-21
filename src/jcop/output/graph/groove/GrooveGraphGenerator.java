@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.regex.Matcher;
 
 import jcop.Globals.CompilerOps;
+import jcop.compiler.CompilerConfiguration;
 import jcop.compiler.filecopy.AuxiliaryCompilerFilesHandler;
 import jcop.output.graph.GraphGenerator;
 import jcop.output.graph.INode;
@@ -96,7 +97,7 @@ public class GrooveGraphGenerator extends GraphGenerator {
 	}
 
 	public void save() {		
-		String file = Program.getValueForOption(CompilerOps.groove);
+		String file = CompilerConfiguration.getInstance().getValueForOption(CompilerOps.groove);
 		xsw.save(AuxiliaryCompilerFilesHandler.getInstance().getWorkingDir() + File.separator + file);		
 	}
 	

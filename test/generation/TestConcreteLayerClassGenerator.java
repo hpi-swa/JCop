@@ -1,4 +1,4 @@
-package test.generation;
+package generation;
 
 import jcop.generation.layers.ConcreteLayerClassGenerator;
 import junit.framework.TestCase;
@@ -27,12 +27,11 @@ public class TestConcreteLayerClassGenerator extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		layer = new LayerDecl(
-				new Modifiers(), "Dummy",	new Opt<Access>(), new List(),new List());
+				new List(),new Modifiers(), "Dummy", new List(), new Opt<Access>(), new List(),new List());
 		
 		CompilationUnit u = new CompilationUnit("Compilation", new List(), new List());
 		ClassDecl c = new ClassDecl(
 				new Modifiers(), "C", new Opt(), new List(), new List().add(layer)); 
-		
 		
 		u.addChild(c);
 		
@@ -40,7 +39,7 @@ public class TestConcreteLayerClassGenerator extends TestCase {
 				new Modifiers(), 
 				new TypeAccess("java.lang", "String"), 
 				"toBeWrapped");
-		this.gen = new ConcreteLayerClassGenerator(layer);		
+		this.gen = new ConcreteLayerClassGenerator(layer);	
 	}
 	
 	public void testGenDelegationMethod() {

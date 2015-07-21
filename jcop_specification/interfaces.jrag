@@ -28,6 +28,28 @@ aspect Interfaces {
 	  }
 	  MethodDecl implements NamedMember;
 	  FieldDeclaration implements NamedMember; 
-	  
-	  
+
+	  /*
+		For JCopTypeCheck.
+		Added by Hiroaki.
+	  */
+
+	  interface JCopOriginal {
+							
+	  }
+			
+	  ContextDecl implements JCopOriginal;
+	  LayerActivation implements JCopOriginal;
+	  LayerSwapping implements JCopOriginal;	  
+	  LayerDecl implements JCopOriginal;
+	  LayerImportDecl implements JCopOriginal;
+	  ObjectSpecificLayerActivation implements JCopOriginal;
+	  OpenLayerDecl implements JCopOriginal;
+	  PackageOrTypeAccess implements JCopOriginal;
+	  // TypeAccess implements JCopOriginal;
+	  //ParseName implements JCopOriginal;
+	  ProceedExpr implements JCopOriginal;
+	  SuperProceedExpr implements JCopOriginal;
+	  ThisLayerAccess implements JCopOriginal;
+	  // PartialMethodDecl implements JCopOriginal;
 }

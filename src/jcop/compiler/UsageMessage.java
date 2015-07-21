@@ -33,7 +33,7 @@ public class UsageMessage {
 		
 	private void init() {		
 		usage = 
-			"JCop compiler " + Globals.version 
+			"Typed JCop compiler " + Globals.version 
 			+ " (created " + getCreateDate() + ")\n"
 			+ "Usage: jcopc [-options] class\n"
 			+ "where possible options include:\n";
@@ -46,14 +46,15 @@ public class UsageMessage {
 		addUsageLine(CompilerOps.sourcepath + " <path>", 
 			"Specify where to find input source files. Only required if the" +
 			" sources aren't located in the working directory");								
-		addUsageLine(CompilerOps.xmlOutlinePath + "<path>", 
+		/*addUsageLine(CompilerOps.xmlOutlinePath + "<path>", 
 			"Generate an outline in XML format (useful for development");
 		addUsageLine(CompilerOps.xmlCILOutline, 
-			"Generate an outline in XML format (useful for development environments");			
+			"Generate an outline in XML format (useful for development environments");
+		*/			
 		addUsageLine(CompilerOps.compiletimeLogging, 
 			"Output JCop specific messages about what the compiler is doing");			
-		addUsageLine(CompilerOps.runtimeLogging,
-			"Loggs layer activation and composition information at runtime");
+		/*addUsageLine(CompilerOps.runtimeLogging,
+			"Loggs layer activation and composition information at runtime");*/
 		addUsageLine(CompilerOps.verbose, 
 			"Output messages about what the compiler is doing");			
 		addUsageLine(CompilerOps.help,

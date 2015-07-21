@@ -1,0 +1,342 @@
+import jcop.typecheck.LookupCopMembers;
+
+aspect CopNameBinding{
+	eq LayerDecl.getRequireTypes().nameType() = NameType.TYPE_NAME;
+	eq LayerSwapping.getSwappableLayer().nameType() = NameType.TYPE_NAME;
+}
+
+aspect CopNameCheck{
+	public void ASTNode.copNameCheck(){}
+
+	public boolean LayerDecl.validRequireLayers(){
+		for(int i = 0; i < getNumRequireTypes(); i++) {
+			Access a = getRequireTypes(i).lastAccess();
+			if(a.type() instanceof LayerDecl && ((LayerDecl)a.type()).sub_of_swappable()){
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public void LayerDecl.copNameCheck(){
+		if(isCircular())
+			error("circular inheritance dependency in layer " + typeName());
+
+		if(isReqTransCircular())
+			error("circular requires and inheritance dependency in layer " + typeName());
+		if(!validRequireLayers())
+			error("a layer cannot require a layer of sub-layer of a swappable layer");
+	}
+
+	public void MethodAccess.copNameCheck(){
+		if(!decls().isEmpty() || (isQualified() && qualifier().isUnknown())){
+			return;
+		}
+
+		TypeDecl type;
+		java.util.List<LayerDecl> layers = leastCurrentActivationLayers();
+		
+		if(isQualified()){
+			// e.m();
+			type = qualifier().type(); 
+		}else{
+			// m();
+			type = hostType(); 
+		}
+
+		java.util.List<MethodDecl> methods = LookupCopMembers.getInstance().memberMethodsInLayers(layers,type,name());
+		// if there is no method, then throw to java original method name check.
+		if(maxSpecific(methods).size() < 1){
+			error("There is no valid method " + toString() + " in this context " +
+				  LookupCopMembers.layersToString(layers) + ".");
+		}
+	}
+
+	
+	inh MethodDecl ProceedExpr.hostMethodDecl();
+	eq MethodDecl.getBlock().hostMethodDecl() = this;
+	eq Program.getChild().hostMethodDecl() = null;
+
+//	syn String ProceedExpr.name() = hostMethodDecl().name();
+
+	inh LayerDecl Access.enclosingLayerDecl();
+	eq Program.getChild().enclosingLayerDecl() = LookupCopMembers.getInstance().getBaseLayer();
+	eq LayerDecl.getBodyDecl().enclosingLayerDecl() = this;
+
+	public void ProceedExpr.copNameCheck(){
+		TypeDecl type;
+		java.util.List<LayerDecl> layers = leastCurrentActivationLayers();
+		java.util.List<LayerDecl> layers_plus_l = leastCurrentActivationLayers();		
+		layers.remove(enclosingLayerDecl());
+		type = hostType(); 
+		MethodDecl m = hostMethodDecl();
+
+		if(!(m instanceof PartialMethodDecl)){
+			return;
+		}
+
+		java.util.List<MethodDecl> methods = LookupCopMembers.getInstance().memberMethodsInLayers(layers,layers_plus_l,type,m.name());
+		if(methods.size() < 1){  // it may be different
+				error("Invalid proceed of method " + m.name().toString() + " in this context" +
+							LookupCopMembers.layersToString(layers_plus_l) + ".");
+		}		
+	}
+	
+}
+
+aspect LayerCircularity{
+	syn boolean LayerDecl.isReqTransCircular(){
+		java.util.List<LayerDecl> list = req_trans();
+		LayerDecl buf = this;
+		
+		while(buf != null){
+			if(list.contains(buf))
+				return true;
+			buf = buf.superlayer();
+		}
+		return false;
+	}
+
+	eq LayerDecl.isCircular() {
+		if(hasSuperClassAccess()) {
+			Access a = getSuperClassAccess().lastAccess();
+			while(a != null) {
+				if(a.type().isCircular())
+					return true;
+				a = (a.isQualified() && a.qualifier().isTypeAccess()) ? (Access)a.qualifier() : null;
+			}
+		}
+		for(int i = 0; i < getNumRequireTypes(); i++) {
+			Access a = getRequireTypes(i).lastAccess();
+			while(a != null) {
+				if(a.type().isCircular())
+					return true;
+				a = (a.isQualified() && a.qualifier().isTypeAccess()) ? (Access)a.qualifier() : null;
+			}
+		}
+		return false;
+	}
+}
+
+
+aspect resetCopNodes{
+	public void ASTNode.resetCopNodes(){
+		if(this instanceof LayerActivation | this instanceof LayerDecl | this instanceof ProceedExpr){
+			this.is$Final(false);
+		}
+		for(int i = 0; i < getNumChildNoTransform(); i++) {
+			getChildNoTransform(i).resetCopNodes();
+		}
+	}
+
+	public void ASTNode.myTransformation() {
+		for(int i = 0; i < getNumChild(); i++) {
+			getChild(i).myTransformation();
+		}
+	}
+}
+
+aspect CopAccessControl{
+
+	
+	public void ASTNode.copAccessControl(){}
+
+	public boolean LayerDecl.validRequireTypes(){
+		for(int i = 0; i < getNumRequireTypes(); i++){
+			if(!getRequireTypes(i).type().isLayerDecl())
+				return false;
+		}
+		return true;
+	}
+	
+	public boolean LayerDecl.widenRequireTypes(){
+		if(hasSuperLayer()){
+			return LayerDecl.narrowableLayers(superlayer().requireLayers(), requireLayers());
+		}
+		return true;
+	}
+
+	public void LayerDecl.copAccessControl(){
+		if(!validRequireTypes()){
+			error("require types must be layer");
+			return;
+		}
+		
+		if(!widenRequireTypes()){
+			error("invalid require clause.");
+			return;
+		}
+
+		for(Iterator<LayerDecl> iter = requiresIterator(); iter.hasNext();){
+			TypeDecl decl = iter.next();
+			if(!decl.isCircular() && !decl.accessibleFrom(this))
+				error("layer " + fullName() + " can not require non accessible type " + decl.fullName());
+		}
+	}
+}
+
+aspect CopTypeAnalysis{
+	syn boolean LayerActivation.validLayerActivation() {
+		ArrayList<LayerDecl> current_layers = leastCurrentActivationLayers();
+		ArrayList<LayerDecl> next_layers = new ArrayList<LayerDecl>();
+		ArrayList<LayerDecl> add_layers = new ArrayList<LayerDecl>();
+		List<Expr> args = getArgs();
+
+		for(Iterator<Expr> iter = args.iterator(); iter.hasNext();){
+			TypeDecl buftype = iter.next().type();
+			if(buftype.isLayerDecl()){
+				add_layers.add((LayerDecl)buftype);
+			}else{
+				return false;
+			}
+		}
+
+		next_layers.addAll(current_layers);
+
+		if(this.getActivation()){ //with
+			next_layers.addAll(add_layers);
+			for(Iterator<LayerDecl> iter = add_layers.iterator(); iter.hasNext();){
+				LayerDecl decl =iter.next();
+				if(!LayerDecl.narrowableLayers(decl.requireLayers(), next_layers)){
+					return false;
+				}
+			}
+		}else{ //without
+			return true;
+			// for(Iterator<LayerDecl> iter = add_layers.iterator(); iter.hasNext()){
+			// 	LayerDecl decl =iter.next();
+			// 	if(!narrowableLayers(decl.requireLayers(), next_layers())){
+			// 		return false;
+			// 	}
+			// }
+		}
+		return true;
+	}
+
+	syn boolean LayerActivation.validArgTypes(){
+		List<Expr> args = getArgs();
+		Iterator<Expr> iter = args.iterator();
+		while(iter.hasNext()){
+			if(!iter.next().type().isLayerDecl())
+				return false;
+		}
+		return true;
+	}
+
+	syn boolean LayerSwapping.validArgTypes(){
+		List<Expr> args = getArgs();
+		Iterator<Expr> iter = args.iterator();
+		TypeDecl swlayer = getSwappableLayer().type();
+		
+		if(!swlayer.getModifiers().isSwappable())
+			return false;
+		
+		while(iter.hasNext()){
+			TypeDecl type = iter.next().type();
+			if(!type.isLayerDecl() || !type.sublayer(swlayer))
+				return false;
+		}
+		return true;
+	}	
+
+	syn boolean LayerSwapping.validLayerSwapping() {
+		ArrayList<LayerDecl> current_layers = leastCurrentActivationLayers();
+		ArrayList<LayerDecl> next_layers = new ArrayList<LayerDecl>();
+		ArrayList<LayerDecl> add_layers = new ArrayList<LayerDecl>();
+		List<Expr> args = getArgs();
+		TypeDecl swlayer = getSwappableLayer().type();
+
+		/* calculate layers to be added*/
+		for(Iterator<Expr> iter = args.iterator(); iter.hasNext();){
+			TypeDecl buftype = iter.next().type();
+			if(buftype.isLayerDecl()){
+				add_layers.add((LayerDecl)buftype);
+			}else{
+				return false;
+			}
+		}
+
+		next_layers.addAll(current_layers);
+		/* calculate current layers after deactivation */
+		for(Iterator<LayerDecl> iter = current_layers.iterator(); iter.hasNext();){
+			LayerDecl bufl = iter.next();
+			if(bufl.sublayer(swlayer))
+				next_layers.remove(bufl);
+		}
+
+		/* check whether require layers of activating layers are valid or not */
+		next_layers.addAll(add_layers);
+		for(Iterator<LayerDecl> iter = add_layers.iterator(); iter.hasNext();){
+			LayerDecl decl =iter.next();
+			if(!LayerDecl.narrowableLayers(decl.requireLayers(), next_layers)){
+				return false;
+			}
+		}
+		return true;
+	}
+}
+
+aspect CopSyntacticClassification{
+	eq ThisLayerAccess.predNameType() = NameType.TYPE_NAME;
+}
+
+
+aspect CopTypeCheck{
+
+	public void ASTNode.copTypeCheck(){}
+
+	public void LayerSwapping.copTypeCheck(){
+		if(validArgTypes()){
+			if(!validLayerSwapping()){
+				error("layer swapping error: requires relation will be broken.");
+			}
+		}else{
+			error("Layer Swapping error: argument error.");
+		}
+	}	
+
+	public void LayerActivation.copTypeCheck(){
+		if(validArgTypes()){
+			if(!validLayerActivation()){
+				if(this.getActivation())
+					error("layer activation error: requires relation will be broken.");
+				else
+					warning("layer deactivation warning: requires relation may be broken.");
+			}
+		}else{
+			error("Layer (De)Activation error: the argument must be an instance of layer.");
+		}
+	}
+
+
+	public void ASTNode.CopCollectErrors(){
+		copTypeCheck();
+		copNameCheck();
+		copAccessControl();
+		for(int i = 0; i < getNumChildNoTransform(); i++) {
+			getChild(i).CopCollectErrors();
+		}
+	}
+
+	public void ASTNode.setInitialforCop(){
+		flushCache();
+		for(int i = 0; i < getNumChild(); i++){
+			ASTNode bufnode = getChild(i);
+			/* initializing state about attributes*/
+										
+			if(bufnode instanceof JCopOriginal){
+				bufnode.is$Final(false);
+				bufnode = getChild(i);
+			}else{
+				bufnode.setInitialforCop();
+			}					
+		}
+
+	}
+	
+	public void CompilationUnit.CopErrorCheck(Collection err, Collection warn) {
+		CopCollectErrors();
+		err.addAll(errors);
+		warn.addAll(warnings);
+	}
+}

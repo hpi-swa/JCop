@@ -1,0 +1,7 @@
+aspect ForJava7{
+
+	eq LayerActivation.modifiedInScope(Variable var) = false;
+	eq LayerSwapping.modifiedInScope(Variable var) = false;	
+	eq ObjectSpecificLayerActivation.modifiedInScope(Variable var) = false;
+
+}

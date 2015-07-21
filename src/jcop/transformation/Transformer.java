@@ -31,9 +31,11 @@ abstract public class Transformer {
 	
 	protected void addBodyDeclTo(NamedMember member, TypeDecl classDecl) {
 		CompilerMessageStream.getInstance().maybeLog("Generate member %s in class %s", member.getID(), classDecl.getFullQualifiedName());
-		classDecl.resetCache();		
+		//classDecl.resetCache();
+		classDecl.flushCache();
 		classDecl.addBodyDecl((BodyDecl)member);		
-		classDecl.resetCache();
+		//classDecl.resetCache();
+		classDecl.flushCache();
 	}	
 	
 	

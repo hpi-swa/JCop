@@ -10,29 +10,32 @@ public class JCopFrontend extends Frontend {
 	protected void initOptions() {
 		super.initOptions();
 		// program.addKeyValueOption(CompilerOps.rootDir);
-		program.addKeyOption(CompilerOps.runtimeLogging);		
-		program.addKeyValueOption(CompilerOps.xmlOutlinePath);
-		program.addKeyOption(CompilerOps.xmlCILOutline);
-		program.addKeyOption(CompilerOps.compiletimeLogging);
-		program.addKeyValueOption(CompilerOps.dumpSources);
-		program.addKeyOption(CompilerOps.noAspects);
-		program.addKeyOption(CompilerOps.aspectInfo);
-		program.addKeyValueOption(CompilerOps.agg);
-		program.addKeyValueOption(CompilerOps.groove);
-		program.addKeyOption(CompilerOps.debug);
-		program.addKeyValueOption(CompilerOps.layerpath);
-		program.addKeyValueOption(CompilerOps.inpath);
+		program.options().addKeyOption(CompilerOps.runtimeLogging);		
+		program.options().addKeyValueOption(CompilerOps.xmlOutlinePath);
+		program.options().addKeyOption(CompilerOps.xmlCILOutline);
+		program.options().addKeyOption(CompilerOps.compiletimeLogging);
+		program.options().addKeyValueOption(CompilerOps.dumpSources);
+		program.options().addKeyOption(CompilerOps.noAspects);
+		program.options().addKeyOption(CompilerOps.aspectInfo);
+		program.options().addKeyValueOption(CompilerOps.agg);
+		program.options().addKeyValueOption(CompilerOps.groove);
+		program.options().addKeyOption(CompilerOps.debug);
+		program.options().addKeyValueOption(CompilerOps.layerpath);
+		program.options().addKeyValueOption(CompilerOps.inpath);
+		program.options().addKeyValueOption(CompilerOps.staticactive);
 	} 
 	
-
+	@Override
 	protected String url() {
 		return Globals.url;
 	}
 
+	@Override
 	protected String name() {
 		return Globals.lang + " Compiler";
 	}
-
+	
+	@Override
 	protected String version() {
 		return Globals.version;
 	}

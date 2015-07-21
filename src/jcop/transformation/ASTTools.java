@@ -87,9 +87,9 @@ public class ASTTools extends ASTNode<ASTNode> {
 
 			public static CompilationUnit lookupCompilationUnitForPackage(ASTNode node, String pckg) {
 				Program prog = lookupProgram(node);
-				for(CompilationUnit cu : prog.getCompilationUnitList()) {
-					if (cu.getPackageDecl().equals(pckg)) {
-						return cu;				
+				for(Object cu : prog.getCompilationUnitList()) {
+					if (((CompilationUnit)cu).getPackageDecl().equals(pckg)) {
+						return (CompilationUnit)cu;				
 					}
 				}
 				return null;		

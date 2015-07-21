@@ -1,0 +1,200 @@
+import java.util.*;
+import jcop.typecheck.*;
+
+aspect HostLayer{
+	// syn boolean LayerDecl.includeNewMember() {  // fold
+	// 	int childnum = getNumChild();
+	// 	for (int i = 0; i < childnum; i++){
+	// 		if(getBodyDecl(i).isNewMember() == true)
+	// 			return true;
+	// 	}
+	// 	return false;
+	// }
+
+	// syn lazy boolean BodyDecl.isNewMember() = true;
+
+	// // is layer original?
+	// eq PartialMethodDecl.isNewMember(){
+	// 	return LookupCopMembers.getInstance().isNewMethod(this);
+	// }
+
+	// syn lazy boolean ASTNode.haveProceed(){
+	// 	for(int i = 0; i < getNumChild(); i++){
+	// 		if(getChildNoTransform(i).haveProceed())
+	// 			return true;
+	// 	}
+	// 	return false;
+	// }
+
+	// eq ProceedExpr.haveProceed() = true;
+
+
+	syn LayerDecl PartialMethodDecl.hostLayerDecl(){
+		return (LayerDecl)parent.parent; //how about OpenLayer??
+	}
+
+	syn LayerDecl LayerDecl.hostLayerDecl() = this;
+
+
+	// How about OpenLayer??
+	syn LayerDecl OpenLayerDecl.hostLayerDecl(){
+		String pckg = getTypeName().packageName();
+		LayerDecl ld = (LayerDecl)lookupType(getID()).iterator().next();
+		if(ld instanceof LayerDecl)
+			return ld;
+		jcop.compiler.JCopCompiler.abort(sourceFile(), sourceLineNumber(), jcop.Globals.Msg.generalError , getTypeName() );
+		return ld;
+	}
+	
+	// default layer is baseLayer
+	syn LayerDecl BodyDecl.hostLayerDecl() = LookupCopMembers.getInstance().getBaseLayer();
+
+	// return full qualified signature pair list
+	// syn Set<Pair<String, ClassDecl>> LayerDecl.partialInterface(){
+	// 	Set<Pair<String, ClassDecl>> sigs = new HashSet<Pair<String, ClassDecl>>();
+	// 	for(int i = 0; i < getNumBodyDecl(); i++){
+	// 		if(getBodyDecl(i) instanceof PartialMethodDecl){
+	// 			sigs.add(new Pair(((PartialMethodDecl)getBodyDecl(i)).getFullQualifiedName(), getBodyDecl(i).hostType()));
+	// 		}
+	// 	}
+	// 	return sigs;
+	// }
+
+	// maybe null
+	// syn MethodDecl PartialMethodDecl.baseMethod(){
+	// 	return LookupCopMembers.getInstance().getBaseMethod(this);
+	// }
+}
+
+
+aspect LeastActivationLayers{
+	syn java.util.List<LayerDecl> TypeDecl.requireLayers() = LookupCopMembers.getInstance().getStaticActiveLayers();
+
+	eq LayerDecl.requireLayers() {
+		ArrayList<LayerDecl> list = new ArrayList<LayerDecl>();
+		for(Iterator<LayerDecl> iter = requiresIterator(); iter.hasNext();){
+			LayerDecl decl = iter.next();
+			list.add(decl);
+			list.addAll(decl.requireLayers());
+		}
+		return list;
+	}
+
+	public Iterator<LayerDecl> LayerDecl.requiresIterator() {
+		return new Iterator() {
+			public boolean hasNext() {
+				computeNextCurrent();
+				return current != null;
+			}
+			public LayerDecl next() {
+				return current;
+			}
+			public void remove() {
+				throw new UnsupportedOperationException();
+			}
+			private int index = 0;
+			private LayerDecl current = null;
+			private void computeNextCurrent() {
+				current = null;
+				if(!isLayerDecl() || isObject() || isCircular())
+					return;
+				while(index < getNumRequireTypes()) {
+					LayerDecl typeDecl = (LayerDecl)getRequireTypes(index++).type();
+					if(!typeDecl.isCircular() && typeDecl.isLayerDecl()) {
+						current = typeDecl;
+						return;
+					}
+				}
+			}
+		};
+	}
+
+	inh ArrayList<LayerDecl> LayerActivation.leastCurrentActivationLayers();
+	inh ArrayList<LayerDecl> LayerSwapping.leastCurrentActivationLayers();	
+	inh ArrayList<LayerDecl> Expr.leastCurrentActivationLayers();
+	//inh ArrayList<LayerDecl> Block.leastCurrentActivationLayers();
+	eq Program.getChild().leastCurrentActivationLayers() = new ArrayList();
+	// eq CompilationUnit.getTypeDecl(int i).leastCurrentActivationLayers(){
+	// 	TypeDecl buf = getTypeDecls().getChild(i);
+	// 	ArrayList<LayerDecl> list = new ArrayList();
+	// 	if (buf.isLayerDecl()){
+	// 		list.add((LayerDecl)buf);
+	// 		list.addAll(((LayerDecl)buf).requireLayers());
+	// 	}
+	// 	return list;
+	// }
+
+	eq LayerDecl.getBodyDecl().leastCurrentActivationLayers(){
+		ArrayList<LayerDecl> list = new ArrayList();
+		list.add(this);
+		list.addAll(this.requireLayers());
+		return list;
+	}
+
+	eq OpenLayerDecl.getBodyDecl().leastCurrentActivationLayers(){
+		LayerDecl ldecl = hostLayerDecl();
+		ArrayList<LayerDecl> list = new ArrayList();
+		list.add(ldecl);
+		list.addAll(ldecl.requireLayers());
+		return list;
+	}
+
+	// eq ClassDecl.getBodyDecl(int i).leastCurrentActivationLayers(){
+	// 	BodyDecl buf = getBodyDecls().getChild(i);
+	// 	ArrayList<LayerDecl> list = new ArrayList();
+	// 	if(buf instanceof OpenLayerDecl){
+	// 		LayerDecl ldecl = ((OpenLayerDecl)buf).hostLayerDecl();
+	// 		list.add(ldecl);
+	// 		list.addAll(ldecl.requireLayers());
+	// 	}
+	// 	return list;
+	// }
+
+	eq LayerActivation.getBlock().leastCurrentActivationLayers(){
+		ArrayList<LayerDecl> current_list = new ArrayList<LayerDecl>();
+		current_list.addAll(leastCurrentActivationLayers());
+
+		if(this.getActivation()){
+			for(Iterator<Expr> iter = getArgs().iterator(); iter.hasNext();){
+				TypeDecl buftype = iter.next().type();
+				if(buftype.isLayerDecl()){
+					current_list.add((LayerDecl)buftype);
+				}
+			}
+		}else{
+			for(Iterator<Expr> iter = getArgs().iterator(); iter.hasNext();){
+				TypeDecl buftype = iter.next().type();
+				if(buftype.isLayerDecl()){
+					current_list.remove((LayerDecl)buftype);
+				}
+			}
+		}
+		return current_list;
+	}
+
+	eq LayerSwapping.getBlock().leastCurrentActivationLayers(){
+		ArrayList<LayerDecl> current_list = new ArrayList<LayerDecl>();
+		TypeDecl swlayer = getSwappableLayer().type();
+		
+		current_list.addAll(leastCurrentActivationLayers());
+
+		/* deactivate all sublayers of swappable layer */
+		for(Iterator<LayerDecl> iter = leastCurrentActivationLayers().iterator(); iter.hasNext();){
+			LayerDecl buftype = iter.next();
+			if(buftype.sublayer(swlayer))
+				current_list.remove(buftype);
+		}
+
+		for(Iterator<Expr> iter = getArgs().iterator(); iter.hasNext();){
+			TypeDecl buftype = iter.next().type();
+			if(buftype.isLayerDecl()){
+				current_list.add((LayerDecl)buftype);
+			}
+		}
+		return current_list;
+	}	
+
+	public ArrayList<LayerDecl> LayerActivation.getActivationLayersOfBlock(ArrayList<LayerDecl> current_list) {
+		return current_list;
+	}
+}

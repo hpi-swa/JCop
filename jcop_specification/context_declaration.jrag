@@ -5,12 +5,12 @@ aspect ContextDecl {
      s.append("context ");
      s.append(getID());
      s.append(" { \n");
-     indent++;
+     //indent++;
      getContextConstraintList().toString(s);
      for (BodyDecl bodyDecl : getBodyDecls()) {
         bodyDecl.toString(s);
      }
-     indent--;
+     //indent--;
      s.append(indent() + "}\n");
   }
 

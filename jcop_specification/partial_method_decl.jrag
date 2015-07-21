@@ -23,17 +23,25 @@ aspect LocalPartialMethodDecl {
 //			  new Opt<Block>(block)		 
 //	  );
 //    }}
-	  
-	   public TypeDecl PartialMethodDecl.hostType() {
-		 NamePattern p = getNamePatternNoTransform();		
-		 if (p instanceof DotNamePattern) {	 
-			  NamePattern typePattern = ((DotNamePattern)p).getLhs();			
-			 TypeDecl found =  lookupHostType(typePattern);		
-			 return found;
-		 }
-		 jcop.compiler.JCopCompiler.abort(sourceFile(), sourceLineNumber(), "Cannot find base declaration for partial method: %s in %s", p , getEnclosingLayer().getFullQualifiedName() );
-		 return null;
-	  }  
+
+// modified by hiro
+
+	syn ClassDecl PartialMethodDecl.hostType(){
+		NamePattern p = getNamePatternNoTransform();		
+		if (p instanceof DotNamePattern) {	 
+			NamePattern typePattern = ((DotNamePattern)p).getLhs();			
+			TypeDecl found = lookupHostType(typePattern);
+			if(!(found instanceof ClassDecl)){ // by hiro
+				jcop.compiler.JCopCompiler.abort(sourceFile(), sourceLineNumber(), "Cannot find 'class' declaration for partial method: %s in %s", p , getEnclosingLayer().getFullQualifiedName() );
+				return null;
+			}
+			return (ClassDecl)found;
+		}
+		jcop.compiler.JCopCompiler.abort(sourceFile(), sourceLineNumber(), "Cannot find base declaration for partial method: %s in %s", p , getEnclosingLayer().getFullQualifiedName() );
+		return null;
+	}
+
+	eq PartialMethodDecl.getBlock().hostType() = hostType();  
 	  
     private LayerDecl PartialMethodDecl.getEnclosingLayer() {
 		try {
@@ -43,37 +51,45 @@ aspect LocalPartialMethodDecl {
 			jcop.compiler.JCopCompiler.abort(sourceFile(), sourceLineNumber(), "Enclosing type declaration of partial method '%s' is not a layer declaration!", getID() );
 			return null;
 		}
-   }
-   
-    private ClassDecl PartialMethodDecl.lookupHostType(NamePattern typePattern) {    	
-    	if (typePattern instanceof DotNamePattern) {    		
-			 DotNamePattern dtp = (DotNamePattern)typePattern;			 
-			 String pckg = dtp.getLhs().toString();			
-			 String typeName = dtp.getRhs().toString();			 
-			 ClassDecl type = (ClassDecl)lookupType(pckg, typeName);			 
-			 if (type != null)  {			
-				 return type; 
-			 }
-								
-			 ClassDecl host = lookupHostType(dtp.getLhs());
-			 if (host != null) {		
-				 for (BodyDecl element : host.getBodyDecls()) {
-					 if(element instanceof MemberClassDecl) {					 
-						 ClassDecl nestedType = ((MemberClassDecl)element).getClassDecl();					
-						 if (nestedType.getID().equals(typeName)) {							 
-							 return nestedType;
-						 }
-					 }			 
-				 }
-			 }
-    	}
+	}
+	
+    private TypeDecl PartialMethodDecl.lookupHostType(NamePattern typePattern) {    	
+    	if (typePattern instanceof DotNamePattern) {
+			DotNamePattern dtp = (DotNamePattern)typePattern;
+			String pckg = dtp.getLhs().toString();
+			String typeName = dtp.getRhs().toString();
+			TypeDecl type = lookupType(pckg, typeName);			 
+			if (type != null)  {			
+				return type; 
+			}
+			// for InnerClass
+			TypeDecl host = lookupHostType(dtp.getLhs());
+			if (host != null) {		
+				for (BodyDecl element : host.getBodyDecls()) {
+					if(element instanceof MemberClassDecl) {					 
+						TypeDecl nestedType = ((MemberClassDecl)element).getClassDecl();					
+						if (nestedType.getID().equals(typeName)) {							 
+							return nestedType;
+						}
+					}			 
+				}
+			}
+    	}else{
+			// in same package
+			String typeName = typePattern.toString();
+			TypeDecl type = extractSingleType(lookupType(typeName));
+			if (type != null)  {			
+				return type; 
+			}
+		}
+
 		jcop.compiler.JCopCompiler.abort(sourceFile(), sourceLineNumber(), jcop.Globals.Msg.pmdHostNotFound, getNamePattern() );
 		return null;    	
 			
 		// TODO Auto-generated method stub
 		
 	}
-  
+	
   	public String PartialMethodDecl.getProceedOrder() {
 		for (Modifier modifier : getModifiers().getModifierList())
 			if (isPreceedenceModifier(modifier))
@@ -100,15 +116,16 @@ aspect LocalPartialMethodDecl {
   		return s.toString();
   	}
 
-	public String PartialMethodDecl.getID() {	
-	    	String fqn = getNamePattern().toString();
-	    	String id = fqn.substring(fqn.lastIndexOf(".") + 1);
-	    	return id;	      	
-	    }
+	// public String PartialMethodDecl.getID() {	
+	//     	String fqn = getNamePattern().toString();
+	//     	String id = fqn.substring(fqn.lastIndexOf(".") + 1);
+	//     	return id;	      	
+	//     }
 	
 
 	    public String PartialMethodDecl.name() {
-	      	return getNamePattern().toString();
+	      	//return getNamePattern().toString();  by Hiroaki, for maxSpecific.
+			return getID();
 	    }
 
 

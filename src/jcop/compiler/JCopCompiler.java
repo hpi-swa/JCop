@@ -26,6 +26,7 @@
 package jcop.compiler;
 
 import static jcop.tools.Map.*;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,10 +46,12 @@ import jcop.output.XMLOutlineGenerator;
 import jcop.output.graph.GraphGeneratorFactory;
 import jcop.output.graph.GraphGeneratorFactory.Type;
 import jcop.tools.Map.*;
+import jcop.typecheck.LookupCopMembers;
 import AST.BytecodeParser;
 import AST.BytecodeReader;
 import AST.CompilationUnit;
 import AST.JavaParser;
+import AST.Options;
 import AST.Program;
 import AST.TypeDecl;
 
@@ -62,18 +65,20 @@ public class JCopCompiler extends JCopFrontend  {
 	private CompilationUnit firstUnit; 
 	private HashSet<CompilationUnit> processedUnits;
 	private CrossReferenceOutlineGenerator crossReferenceGenerator;
+	
+	private Options legacy_option = new Options();
 
 	static {
 		msg = CompilerMessageStream.getInstance();
 	}
 	public static void main(String args[]) {		
 		if (!new JCopCompiler().compile(args)) 	
-			abort();			
 		System.exit(0);					
 	}   
 	    	
 	public JCopCompiler() {		
 		//initFields();
+		super();
 		initOptions();		
 	}	
 	
@@ -88,8 +93,8 @@ public class JCopCompiler extends JCopFrontend  {
 
 	private boolean timeAndCompile(String[] args) {		
 		Timer timer = new Timer();		
-		timer.start();		
-		args = setUp(args);		
+		timer.start();
+		args = setUp(args);
 		boolean hasCompiled =  compileAndCollectErrors(args);
 		tearDown(hasCompiled);
 		timer.stop();
@@ -106,15 +111,57 @@ public class JCopCompiler extends JCopFrontend  {
 			return false;			 
 		}		
 	}
+	
+	// very dirty
+	private void legacyOptionSetup(){
+		legacy_option.initOptions();
+		legacy_option.addKeyOption("-version");
+		legacy_option.addKeyOption("-print");
+		legacy_option.addKeyOption("-g");
+	      legacy_option.addKeyOption("-g:none");
+	      legacy_option.addKeyOption("-g:lines,vars,source");
+	      legacy_option.addKeyOption("-nowarn");
+	      legacy_option.addKeyOption("-verbose");
+	      legacy_option.addKeyOption("-deprecation");
+	      legacy_option.addKeyValueOption("-classpath");
+	      legacy_option.addKeyValueOption("-cp");
+	      legacy_option.addKeyValueOption("-sourcepath");
+	      legacy_option.addKeyValueOption("-bootclasspath");
+	      legacy_option.addKeyValueOption("-extdirs");
+	      legacy_option.addKeyValueOption("-d");
+	      legacy_option.addKeyValueOption("-encoding");
+	      legacy_option.addKeyValueOption("-source");
+	      legacy_option.addKeyValueOption("-target");
+	      legacy_option.addKeyOption("-help");
+	      legacy_option.addKeyOption("-O");
+	      legacy_option.addKeyOption("-J-Xmx128M");
+	      legacy_option.addKeyOption("-recover");
+		legacy_option.addKeyOption(CompilerOps.runtimeLogging);		
+		legacy_option.addKeyValueOption(CompilerOps.xmlOutlinePath);
+		legacy_option.addKeyOption(CompilerOps.xmlCILOutline);
+		legacy_option.addKeyOption(CompilerOps.compiletimeLogging);
+		legacy_option.addKeyValueOption(CompilerOps.dumpSources);
+		legacy_option.addKeyOption(CompilerOps.noAspects);
+		legacy_option.addKeyOption(CompilerOps.aspectInfo);
+		legacy_option.addKeyValueOption(CompilerOps.agg);
+		legacy_option.addKeyValueOption(CompilerOps.groove);
+		legacy_option.addKeyOption(CompilerOps.debug);
+		legacy_option.addKeyValueOption(CompilerOps.layerpath);
+		legacy_option.addKeyValueOption(CompilerOps.inpath);
+		legacy_option.addKeyValueOption(CompilerOps.staticactive);
+	}
 
 	private String[] setUp(String[] args) {			
-		config = CompilerConfiguration.getInstance();			
+		config = CompilerConfiguration.getInstance();
+		config.setProgram(program);
+		legacyOptionSetup();
+		legacy_option.addOptions(args);
 		args = initArgs(args);				 
 		msg.maybeLogTask("arguments: " + Arrays.toString(args));
 		processedUnits = new HashSet<CompilationUnit>();
 		outlineBuffer = new StringBuffer();
-		 fileHandler = AuxiliaryCompilerFilesHandler.getInstance(config.isJCopCompiler());
-		 fileHandler.createFiles();
+		fileHandler = AuxiliaryCompilerFilesHandler.getInstance(config.isJCopCompiler());
+		fileHandler.createFiles();
 		fileHandler.removeJCopAspectClassFile();
 		return args;
 	}
@@ -166,7 +213,7 @@ public class JCopCompiler extends JCopFrontend  {
 	private String[] initArgs(String[] args) {
 		ArgumentParser argumentParser = new ArgumentParser(args);		
 		String[] parsedArgs = argumentParser.getParsedArgs();				
-		processArgs(parsedArgs);				
+		processArgs(parsedArgs);
 		if(config.generateGraph())
 			initGraphGeneration();
 		if (config.generateSources())
@@ -184,9 +231,9 @@ public class JCopCompiler extends JCopFrontend  {
 	}
 
 	private void initOutlineGenerator() {
-		String outlinePath = Program.getValueForOption(CompilerOps.xmlOutlinePath);
-		if (!isAbsolutePath(outlinePath) && Program.hasValueForOption(CompilerOps.sourcepath))
-			outlinePath = Program.getValueForOption(CompilerOps.sourcepath) + File.separator + outlinePath;
+		String outlinePath = program.options().getValueForOption(CompilerOps.xmlOutlinePath);
+		if (!isAbsolutePath(outlinePath) && program.options().hasValueForOption(CompilerOps.sourcepath))
+			outlinePath = program.options().getValueForOption(CompilerOps.sourcepath) + File.separator + outlinePath;
 		File outlineDir = new File(outlinePath);
 		xmlOutlineGenerator = new XMLOutlineGenerator(outlineDir);
 		crossReferenceGenerator = new CrossReferenceOutlineGenerator(outlineDir);
@@ -315,9 +362,11 @@ public class JCopCompiler extends JCopFrontend  {
 		//}
 	}
 	
-	public boolean process(String[] args, BytecodeReader reader, JavaParser parser) {		
+	@Override
+	public boolean process(String[] args, BytecodeReader reader, JavaParser parser) {
+		jcop.compiler.CompilerConfiguration.getInstance().setAstTransform(false);
 		initProgram(reader, parser, args);
-		Collection<String> files = program.files();
+		Collection<String> files = program.options().files();
 
 		if (!sourceFilesExist(files)) 
 			return false;
@@ -329,10 +378,20 @@ public class JCopCompiler extends JCopFrontend  {
 		return processCompilationUnits();
 	}
 
+	private void handleStaticActiveLayers(){
+		if(CompilerConfiguration.getInstance().hasValueForOption(Globals.CompilerOps.staticactive)){
+			String arg = CompilerConfiguration.getInstance().getValueForOption(Globals.CompilerOps.staticactive);
+			String args[] = arg.split(";");
+			for(int i = 0; i < args.length; i++){
+				LookupCopMembers.getInstance().addStaticActiveLayers(args[i]);
+			}
+		}
+	
+	}
 	
 		
 	private boolean processCompilationUnits() {
-		List<CompilationUnit> layers = new ArrayList<CompilationUnit>();
+		//List<CompilationUnit> layers = new ArrayList<CompilationUnit>();
 		
 //		map(program.compilationUnitIterator(), new func<CompilationUnit>() {
 //			public void map(CompilationUnit t) {
@@ -341,24 +400,71 @@ public class JCopCompiler extends JCopFrontend  {
 //		});
 		
 		
+
+		//Program cop_program = program.fullCopy();
+		
+		if(!(jcop.compiler.CompilerConfiguration.getInstance().generateOutline()
+				|| jcop.compiler.CompilerConfiguration.getInstance().generateGraph())){
+			jcop.compiler.CompilerConfiguration.getInstance().setAstTransform(false);
+			LookupCopMembers.getInstance().setupInstance(program);
+			handleStaticActiveLayers();
+			for (Iterator<CompilationUnit> iter = program.compilationUnitIterator(); iter.hasNext();) {			
+				CompilationUnit unit = iter.next();					
+			     if (!processCopCompilationUnit(unit))
+					return false;	
+			}			
+			
+			jcop.compiler.CompilerConfiguration.getInstance().setAstTransform(true);
+		}
+		System.out.println("[COP type check completed :)]");
+		program.setInitialforCop();		
+
 		for (Iterator<CompilationUnit> iter = program.compilationUnitIterator(); iter.hasNext();) {			
 			CompilationUnit unit = iter.next();					
 		     if (!processCompilationUnit(unit))
 				return false;			
-		}			
+		}
+		return true;
+	}
+	
+	private boolean processCopCompilationUnit(CompilationUnit unit){
+		if (unit.fromSource()) {
+			Collection errors = unit.parseErrors();			
+			Collection warnings = new LinkedList();
+			if (errors.isEmpty() || program.options().hasOption("-recover")) {
+				try {
+					unit.CopErrorCheck(errors, warnings);
+				}
+				catch(NullPointerException e) {
+					abort();
+				}
+			}
+			if (!errors.isEmpty() && !config.generateOutline()) {
+				//processErrors(errors, unit);
+				System.out.println("CopCompileError: " + errors);
+				return false;					
+			}
+			else {
+				if(!warnings.isEmpty()) System.err.println(warnings);
+				//processWarnings(warnings, unit);
+				//processNoErrors(unit);
+			}
+		}
 		return true;
 	}
 
 	private boolean processCompilationUnit(CompilationUnit unit) {		
-		if (unit.fromSource()) {				
-			//unit.resetCache();			
+		if (unit.fromSource()) {
+
 			Collection errors = unit.parseErrors();			
 			Collection warnings = new LinkedList();
 			// compute static semantic errors when there are no parse
 			// errors or the recover from parse errors option is specified			
-			if (errors.isEmpty() || program.hasOption("-recover")) {
+			if (errors.isEmpty() || program.options().hasOption("-recover")) {
 				try {
+					//System.out.println("Start errorCheck!!");
 					unit.errorCheck(errors, warnings);
+					
 				}
 				catch(NullPointerException e) {
 					abort();
@@ -369,7 +475,8 @@ public class JCopCompiler extends JCopFrontend  {
 				return false;					
 			}
 			else {
-				processWarnings(warnings, unit);
+				if(!warnings.isEmpty())
+					processWarnings(warnings,	unit);
 				processNoErrors(unit);
 			}	
 		}
@@ -395,6 +502,7 @@ public class JCopCompiler extends JCopFrontend  {
 		}		
 	}
 
+		/* Why processArgs() called twice???*/
 	private void initProgram(BytecodeReader reader, JavaParser parser, String[] args) {
 		program.initBytecodeReader(reader);
 		program.initJavaParser(parser);
@@ -418,6 +526,7 @@ public class JCopCompiler extends JCopFrontend  {
 			time = System.currentTimeMillis() - timestamp;			
 		}
 	}
+	
   
 	public static void setInstanceLayerExits(boolean b) {
 		hasInstanceLayer = true;		

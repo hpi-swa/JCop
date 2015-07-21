@@ -1,0 +1,144 @@
+aspect JCopSubtyping{
+	public static boolean LayerDecl.narrowableLayers(java.util.List<LayerDecl> reqs, java.util.List<LayerDecl> env){
+		for(Iterator<LayerDecl> iter_req = reqs.iterator(); iter_req.hasNext();){
+			LayerDecl decl_req = iter_req.next();
+			boolean flag = false;
+			if(env.contains(decl_req))
+				continue;
+			
+			for(Iterator<LayerDecl> iter_env = env.iterator(); iter_env.hasNext();){
+				LayerDecl decl_env = iter_env.next();
+				if(decl_env.sublayer(decl_req)){
+					flag = true;
+					break;
+				}
+			}
+			if(!flag)
+				return false;
+		}
+		return true;
+	}
+
+	syn boolean TypeDecl.hasSuperLayer() = false;
+	eq NullType.hasSuperLayer() = false;
+
+	eq LayerDecl.hasSuperLayer(){
+		return hasSuperClassAccess() && !superlayer().isTopLayer();
+	}
+
+	syn boolean LayerDecl.isTopLayer() = typeName().equals("jcop.lang.LLayer");
+
+	syn boolean TypeDecl.isBaseLayer() = false;
+	eq LayerDecl.isBaseLayer(){
+		if(typeName().equals("jcop.lang.LBase"))
+			return true;
+		return false;
+	}
+
+	syn boolean TypeDecl.subOfBase() = false;
+	eq NullType.subOfBase() = false;
+
+	eq LayerDecl.subOfBase(){
+		if(isBaseLayer() || isTopLayer())
+			return false;
+		return !hasSuperLayer();
+		// return LookupCopMembers.getInstance().isSafeLayers(Collections.singletonList(this));
+	}
+
+	syn LayerDecl TypeDecl.superlayer() = null;
+	eq NullType.superlayer() = null;
+
+	eq LayerDecl.superlayer(){
+		if(hasSuperClassAccess())
+			return (LayerDecl)getSuperClassAccess().type();
+		else if(subOfBase())
+			return (LayerDecl)lookupType("jcop.lang","LBase");
+		else if(isTopLayer())
+			return null;
+		return null;
+		// return (LayerDecl)lookupType("jcop.lang","LLayer");
+	}
+
+
+	syn boolean TypeDecl.sublayer(TypeDecl type) circular [true] =
+		type == this;
+	eq LayerDecl.sublayer(TypeDecl type) = type.superlayerLayerDecl(this);
+	eq NullType.sublayer(TypeDecl type) = type.superlayerLayerDecl(this);
+
+	syn boolean TypeDecl.superlayerLayerDecl(TypeDecl type) = type == this;
+
+	eq LayerDecl.superlayerLayerDecl(TypeDecl type) =
+		super.superlayerLayerDecl(type) || 
+		type.hasSuperLayer() && type.superlayer() != null && type.superlayer().sublayer(this);
+
+	//an opening for future work, layerdeactivation
+	syn boolean LayerDecl.unrequired() = false;
+
+	syn java.util.List<LayerDecl> LayerDecl.req_trans() circular [new ArrayList<LayerDecl>()] ;
+	eq LayerDecl.req_trans() {
+		java.util.List<LayerDecl> list = requireLayers();
+		java.util.List<LayerDecl> ret_list = new ArrayList<LayerDecl>();
+		ret_list.addAll(list);
+		
+		for(Iterator<LayerDecl> iter = list.iterator(); iter.hasNext();){
+			ret_list.addAll(iter.next().req_trans());
+		}
+		return ret_list;
+	}
+
+	syn boolean LayerDecl.subtype(TypeDecl type){
+		if(type instanceof LayerDecl){
+			java.util.List<LayerDecl> reqs = requireLayers();
+			java.util.List<LayerDecl> superreqs = ((LayerDecl)type).requireLayers();
+			boolean sub = sublayer(type);
+			boolean eq_req = reqs.containsAll(superreqs) && reqs.size() == superreqs.size();
+			return sub && eq_req;
+		}
+		return false;
+	}
+
+	/* whether swappable modifier exists or does not. */
+	syn lazy boolean Modifiers.isSwappable() = numModifier("swappable") != 0;
+
+	/* is a layer */
+	syn boolean LayerDecl.sub_of_swappable(){
+		return hasSuperLayer() && superlayer() != null &&
+			(superlayer().getModifiers().isSwappable() || superlayer().sub_of_swappable());
+	}
+}
+
+aspect JCopSubTypeCheck{
+	eq LayerDecl.assignConversionTo(TypeDecl type, Expr expr){
+		return subtype(type);
+	}
+
+	eq LayerDecl.castingConversionTo(TypeDecl type){
+		if(type instanceof LayerDecl)
+			return type.sublayer(this) || sublayer((LayerDecl)type);
+		return false;
+	}
+
+	public void VariableDeclaration.copTypeCheck() {
+		if(hasInit()) {
+			TypeDecl source = getInit().type();
+			TypeDecl dest = type();
+			if(source instanceof LayerDecl || dest instanceof LayerDecl){
+				if(!source.assignConversionTo(dest, getInit()))
+					error("can not assign " + name() + " of layer type " + dest.typeName() +
+						  " a value of layer type " + source.typeName());
+			}
+		}
+	}
+
+	public void CastExpr.copTypeCheck() {
+		TypeDecl expr = getExpr().type();
+		TypeDecl type = getTypeAccess().type();
+		if(!expr.isUnknown()) {
+			if(!expr.castingConversionTo(type))
+				error(expr.typeName() + " can not be cast into layer " + type.typeName());
+			if(!getTypeAccess().isTypeAccess())
+				error("" + getTypeAccess() + " is not a layer type access in cast expression");
+		}
+	}
+}
+

@@ -13,8 +13,8 @@ aspect JCopFileSupport {
       
 	  if(path.contains(":") /*&& Program.hasValueForOption(jcop.Globals.CompilerOps.rootDir)*/) 
 		  path = /*Program.getValueForOption(jcop.Globals.CompilerOps.rootDir) + "\\" +*/ path;
-	  else if(Program.hasValueForOption(jcop.Globals.CompilerOps.sourcepath))
-		  path = Program.getValueForOption(jcop.Globals.CompilerOps.sourcepath) + File.separator + path;
+	  else if(CompilerConfiguration.getInstance().hasValueForOption(jcop.Globals.CompilerOps.sourcepath))
+		  path = CompilerConfiguration.getInstance().getValueForOption(jcop.Globals.CompilerOps.sourcepath) + File.separator + path;
 	  else
 		  path = System.getProperty("user.dir") + File.separator + path;	  
 	  
@@ -37,7 +37,7 @@ aspect JCopFileSupport {
 	
 		for (File currentFile : sourceFiles) 
 			files.add(currentFile.getAbsolutePath());	
-		if (hasValueForOption(jcop.Globals.CompilerOps.layerpath)) 
+		if (CompilerConfiguration.getInstance().hasValueForOption(jcop.Globals.CompilerOps.layerpath)) 
 			addUnreferencedLayers(files);			
 	} 
  
@@ -69,78 +69,78 @@ aspect JCopFileSupport {
 	  });
   }
   
-  refine Options public void Program.addOptions(String[] args) {
-	    files = new LinkedHashSet(files);
-	    for(int i = 0; i < args.length; i++) {
-	      String arg = args[i];
-	      if(arg.startsWith("@")) {
-	        try {
-	          String fileName = arg.substring(1,arg.length());
-	          java.io.StreamTokenizer tokenizer = new java.io.StreamTokenizer(new java.io.FileReader(fileName));
-	          tokenizer.resetSyntax();
-	          tokenizer.whitespaceChars(' ',' ');
-	          tokenizer.whitespaceChars('\t','\t');
-	          tokenizer.whitespaceChars('\f','\f');
-	          tokenizer.whitespaceChars('\n','\n');
-	          tokenizer.whitespaceChars('\r','\r');
-	          tokenizer.wordChars(33,255);
-	          ArrayList list = new ArrayList();
-	          int next = tokenizer.nextToken();
-	          while(next != java.io.StreamTokenizer.TT_EOF) {
-	            if(next == java.io.StreamTokenizer.TT_WORD) {
-	              list.add(tokenizer.sval);
-	            }
-	            next = tokenizer.nextToken();
-	          }
-	          String[] newArgs = new String[list.size()];
-	          int index = 0;
-	          for(Iterator iter = list.iterator(); iter.hasNext(); index++) {
-	            newArgs[index] = (String)iter.next();
-	          }
-	          addOptions(newArgs);
-	        } catch (java.io.IOException e) {
-	        }
-	      }
-	      else if(arg.startsWith("-")) {
-	        if(!optionDescriptions.containsKey(arg))
-	          throw new Error("Command line argument error: option " + arg + " is not defined");
-	        Option o = (Option)optionDescriptions.get(arg);
+  // refine Options public void Options.addOptions(String[] args) {
+  // 	    files = new LinkedHashSet(files);
+  // 	    for(int i = 0; i < args.length; i++) {
+  // 	      String arg = args[i];
+  // 	      if(arg.startsWith("@")) {
+  // 	        try {
+  // 	          String fileName = arg.substring(1,arg.length());
+  // 	          java.io.StreamTokenizer tokenizer = new java.io.StreamTokenizer(new java.io.FileReader(fileName));
+  // 	          tokenizer.resetSyntax();
+  // 	          tokenizer.whitespaceChars(' ',' ');
+  // 	          tokenizer.whitespaceChars('\t','\t');
+  // 	          tokenizer.whitespaceChars('\f','\f');
+  // 	          tokenizer.whitespaceChars('\n','\n');
+  // 	          tokenizer.whitespaceChars('\r','\r');
+  // 	          tokenizer.wordChars(33,255);
+  // 	          ArrayList list = new ArrayList();
+  // 	          int next = tokenizer.nextToken();
+  // 	          while(next != java.io.StreamTokenizer.TT_EOF) {
+  // 	            if(next == java.io.StreamTokenizer.TT_WORD) {
+  // 	              list.add(tokenizer.sval);
+  // 	            }
+  // 	            next = tokenizer.nextToken();
+  // 	          }
+  // 	          String[] newArgs = new String[list.size()];
+  // 	          int index = 0;
+  // 	          for(Iterator iter = list.iterator(); iter.hasNext(); index++) {
+  // 	            newArgs[index] = (String)iter.next();
+  // 	          }
+  // 	          addOptions(newArgs);
+  // 	        } catch (java.io.IOException e) {
+  // 	        }
+  // 	      }
+  // 	      else if(arg.startsWith("-")) {
+  // 	        if(!optionDescriptions.containsKey(arg))
+  // 	          throw new Error("Command line argument error: option " + arg + " is not defined");
+  // 	        Option o = (Option)optionDescriptions.get(arg);
 	        
-	        if(!o.isCollection && options.containsKey(arg))
-	          throw new Error("Command line argument error: option " + arg + " is multiply defined");
+  // 	        if(!o.isCollection && options.containsKey(arg))
+  // 	          throw new Error("Command line argument error: option " + arg + " is multiply defined");
 	        
-	        if(o.hasValue && !o.isCollection) {
-	          String value = null;
-	          if(i + 1 > args.length - 1)
-	            throw new Error("Command line argument error: value missing for key " + arg);
-	          value = args[i+1];
-	          if(value.startsWith("-"))
-	            throw new Error("Command line argument error: value missing for key " + arg);
-	          i++;
-	          options.put(arg, value);
-	        }
-	        else if(o.hasValue && o.isCollection) {
-	          String value = null;
-	          if(i + 1 > args.length - 1)
-	            throw new Error("Command line argument error: value missing for key " + arg);
-	          value = args[i+1];
-	          if(value.startsWith("-"))
-	            throw new Error("Command line argument error: value missing for key " + arg);
-	          i++;
-	          Collection c = (Collection)options.get(arg);
-	          if(c == null)
-	            c = new ArrayList();
-	          c.add(value);
-	          options.put(arg, c);
-	        }
-	        else {
-	          options.put(arg, null);
-	        }
-	      }
-	      else {
-	        files.add(arg);
-	        addFilesTo(files, arg);
-	      }
-	    }
-	  }
+  // 	        if(o.hasValue && !o.isCollection) {
+  // 	          String value = null;
+  // 	          if(i + 1 > args.length - 1)
+  // 	            throw new Error("Command line argument error: value missing for key " + arg);
+  // 	          value = args[i+1];
+  // 	          if(value.startsWith("-"))
+  // 	            throw new Error("Command line argument error: value missing for key " + arg);
+  // 	          i++;
+  // 	          options.put(arg, value);
+  // 	        }
+  // 	        else if(o.hasValue && o.isCollection) {
+  // 	          String value = null;
+  // 	          if(i + 1 > args.length - 1)
+  // 	            throw new Error("Command line argument error: value missing for key " + arg);
+  // 	          value = args[i+1];
+  // 	          if(value.startsWith("-"))
+  // 	            throw new Error("Command line argument error: value missing for key " + arg);
+  // 	          i++;
+  // 	          Collection c = (Collection)options.get(arg);
+  // 	          if(c == null)
+  // 	            c = new ArrayList();
+  // 	          c.add(value);
+  // 	          options.put(arg, c);
+  // 	        }
+  // 	        else {
+  // 	          options.put(arg, null);
+  // 	        }
+  // 	      }
+  // 	      else {
+  // 	        files.add(arg);
+  // 	        addFilesTo(files, arg);
+  // 	      }
+  // 	    }
+  // 	  }
 }

@@ -22,10 +22,56 @@ aspect JCopModifiers {
   }
   
   refine Modifiers public void MethodDecl.checkModifiers() {
-     if(isBefore() && !isPartialMethod())
-      error("before pertains only to partial method declarations");
-	 if(isAfter() && !isPartialMethod())
-      error("after pertains only to partial method declarations");
+	  super.checkModifiers();
+	  if(hostType().isClassDecl()) {
+		  // 8.4.3.1
+		  if(!hostType().isEnumDecl() && isAbstract() && !hostType().isAbstract())
+			  error("class must be abstract to include abstract methods");
+		  // 8.4.3.1
+		  if(isAbstract() && isPrivate())
+			  error("method may not be abstract and private");
+		  // 8.4.3.1
+		  // 8.4.3.2
+		  if(isAbstract() && isStatic())
+			  error("method may not be abstract and static");
+		  if(isAbstract() && isSynchronized())
+			  error("method may not be abstract and synchronized");
+		  // 8.4.3.4
+		  if(isAbstract() && isNative())
+			  error("method may not be abstract and native");
+		  if(isAbstract() && isStrictfp())
+			  error("method may not be abstract and strictfp");
+		  if(isNative() && isStrictfp())
+			  error("method may not be native and strictfp");
+	  }
+	  if(hostType().isInterfaceDecl()) {
+		  // 9.4
+		  if(isStatic())
+			  error("interface method " + signature() + " in " +
+					hostType().typeName() +  " may not be static");
+		  if(isStrictfp())
+			  error("interface method " + signature() + " in " +
+					hostType().typeName() +  " may not be strictfp");
+		  if(isNative())
+			  error("interface method " + signature() + " in " +
+					hostType().typeName() +  " may not be native");
+		  if(isSynchronized())
+			  error("interface method " + signature() + " in " +
+					hostType().typeName() +  " may not be synchronized");
+		  if(isProtected())
+			  error("interface method " + signature() + " in " +
+					hostType().typeName() +  " may not be protected");
+		  if(isPrivate())
+			  error("interface method " + signature() + " in " +
+					hostType().typeName() +  " may not be private");
+		  else if(isFinal())
+			  error("interface method " + signature() + " in " +
+					hostType().typeName() +  " may not be final");
+	  }
+	  if(isBefore() && !isPartialMethod())
+		  error("before pertains only to partial method declarations");
+	  if(isAfter() && !isPartialMethod())
+		  error("after pertains only to partial method declarations");
   }
   
   refine Modifiers public void FieldDeclaration.checkModifiers() {

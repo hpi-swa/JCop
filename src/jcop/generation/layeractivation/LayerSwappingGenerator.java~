@@ -12,7 +12,7 @@ import AST.Block;
 import AST.CatchClause;
 import AST.Expr;
 import AST.ExprStmt;
-import AST.LayerActivation;
+import AST.LayerSwapping;
 import AST.List;
 import AST.Opt;
 import AST.Program;
@@ -21,67 +21,63 @@ import AST.StringLiteral;
 import AST.TryStmt;
 import AST.VarAccess;
 import AST.VariableDeclaration;
+import AST.ParseName;
+import AST.TypeAccess;
+import java.util.*;
 
+public class LayerSwappingGenerator extends Generator {
 
-public class LayerActivationGenerator extends Generator {
+	private LayerSwapping swapping;
+	private List<Expr> alayers;
+	private Expr swlayer;
+	private String swappingMethodName;
+	private static int activeLayerCounter = 0;
 
-	private LayerActivation activation;
-	private List<Expr> layers;
-	private String activationMethodName;
-	// private static int activeLayerCounter = 0;
-
-	public LayerActivationGenerator(LayerActivation activation, String activationMethodName, List<Expr> layers) {
-		this.activation = activation;
-		this.layers = layers;
-		this.activationMethodName = activationMethodName;
+	public LayerSwappingGenerator(LayerSwapping swapping, List<Expr> alayers, Access swlayer) {
+		this.swapping = swapping;
+		this.alayers = alayers;
+		//this.swlayer = swlayer;
+		this.swlayer = new TypeAccess(swlayer.type().name()).qualifiesAccess(new ParseName("class"));
+		// this.swappingMethodName = swappingMethodName;
 	}
 
-		/*
-from AST.Block
-046      /**
-047       * Create a deep copy of the AST subtree at this node.
-048       * The copy is dangling, i.e. has no parent.
-049       * @return dangling copy of the subtree at this node
-050       * @apilevel low-level
-051       
-052      public Block fullCopy() {
-053        Block tree = (Block) copy();
-054        if (children != null) {
-055          for (int i = 0; i < children.length; ++i) {
-056            ASTNode child = (ASTNode) children[i];
-057            if(child != null) {
-058              child = child.fullCopy();
-059              tree.setChild(child, i);
-060            }
-061          }
-062        }
-063        return tree;
-064      }
-
-		*/
-
-	public Block generateActivationBlock() {
-		Block activationBlock = generateLayerActivationBlock();
+	public Block generateSwappingBlock() {
+		Block swappingBlock = generateLayerSwappingBlock();
 		TryStmt tryStmt = 
 			new TryStmt(
-					activation.getBlock().fullCopy(),
+					swapping.getBlock().fullCopy(),
 					new List<CatchClause>(), 
-					getLayerDeActivationMethodAccess(layers));
-		activationBlock.addStmt(tryStmt);
-		return activationBlock;
+					getLayerRevertingMethodAccess(alayers));
+		swappingBlock.addStmt(tryStmt);
+		return swappingBlock;
 	}
 	
-	private Block generateLayerActivationBlock() {
+	private Block generateLayerSwappingBlock() {
 		Block block = new Block();
-		for (Expr layerAccess : layers) 	
-			block.addStmt(generateLayerAssignment(layerAccess));		
+		block.addStmt(generateSWLayerAssignment());
+		for (Expr layerAccess : alayers)
+			block.addStmt(generateLayerAssignment(layerAccess));
 		return block;
+	}
+
+	private Stmt generateSWLayerAssignment() {					
+		String varName = generateVarName();
+		List<Expr> list = new List<Expr>();
+		list.add(swlayer);
+		Access abstractLayerAccess =
+			getLayerMethodAccess(ID.removeAllSubLayer, list);
+		VariableDeclaration layerAssignment = 
+			new VariableDeclaration(
+				JCopAccess.get(COMPOSITION), 
+				varName, 
+				abstractLayerAccess);
+		return layerAssignment;
 	}
 
 	private Stmt generateLayerAssignment(Expr layerAccess) {					
 		String varName = generateVarName();
-		Access abstractLayerAccess = 
-			getLayerMethodAccess(activationMethodName,	createLayerActivationArgs(layerAccess));		
+		Access abstractLayerAccess =
+			getLayerMethodAccess(ID.addLayer, createLayerSwappingArgs(layerAccess));
 		VariableDeclaration layerAssignment = 
 			new VariableDeclaration(
 				JCopAccess.get(COMPOSITION), 
@@ -90,7 +86,7 @@ from AST.Block
 		return layerAssignment;
 	}
 	
-	private List<Expr> createLayerActivationArgs(Expr layer) {
+	private List<Expr> createLayerSwappingArgs(Expr layer) {
 		List<Expr> args = new List<Expr>();
 		if (CompilerConfiguration.getInstance().hasOption(CompilerOps.runtimeLogging)) 
 			args.add(new StringLiteral(LoggingProperties.loggerName));		
@@ -109,12 +105,12 @@ from AST.Block
 	
 	private Access getLayerMethodAccess(String methodname, List<Expr> args) {
 		return JCopAccess.get(JCOP).qualifiesAccess(createMethodAccess(ID.current))
-			.qualifiesAccess(	createMethodAccess(methodname, args));
+			.qualifiesAccess(createMethodAccess(methodname, args));
 	}
 	
-	private Opt<Block> getLayerDeActivationMethodAccess(List<Expr> args) {
+	private Opt<Block> getLayerRevertingMethodAccess(List<Expr> args) {
 		Block block = new Block();
-		for (int i = 0; i < args.getNumChild(); i++) {
+		for (int i = 0; i < args.getNumChild() + 1; i++) {
 			String varName = generateVarName(i);
 			VarAccess layerAssignment =	new VarAccess(varName);
 			Access abstractLayerAccess = JCopAccess.get(JCOP).qualifiesAccess(createMethodAccess(ID.setComposition, layerAssignment));

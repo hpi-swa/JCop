@@ -97,20 +97,31 @@ public class InstanceLayerClassGenerator extends LayerClassGenerator {
 	}
 
 	private Opt<Access> generateSuperType(LayerDecl layerDecl) {
-		if (layerDecl.hasSuperClassAccess()) {
-			//System.err.println("layer superclass:" + layerDecl.getSuperClassAccess().t);	
+		if(layerDecl.hasSuperClassAccess())
 			return layerDecl.getSuperClassAccessOpt().fullCopy();
-		}
-		else {
-			//System.err.println("no superclass");
-			return new Opt<Access>(JCopAccess.get(CONCRETE_LAYER));
-		}
+		else if(layerDecl.subOfBase()){
+			return new Opt<Access>(new TypeAccess("jcop.lang","LBase"));}
+		else if(layerDecl.isTopLayer())	
+			return new Opt<Access>(new TypeAccess("jcop.lang","ConcreteLayer"));
+		else
+			return new Opt<Access>(new TypeAccess("jcop.lang","LLayer"));
+		
+//		if (layerDecl.hasSuperClassAccess()) {
+//			//System.err.println("layer superclass:" + layerDecl.getSuperClassAccess().t);	
+//			return layerDecl.getSuperClassAccessOpt().fullCopy();
+//		}
+//		else {
+//			//System.err.println("no superclass");
+//			return new Opt<Access>(JCopAccess.get(CONCRETE_LAYER));
+//		}
 }
 
 	private Modifiers generateModifiers() {		
 		Modifiers m = this.topLevelLayer.getModifiers().fullCopy();		
 		if(m.isStaticActive()) 
-			m = removeModifiers(m, jcop.Globals.Modifiers.STATIC_ACTIVE);		
+			m = removeModifiers(m, jcop.Globals.Modifiers.STATIC_ACTIVE);
+		if(m.isSwappable())
+			m = removeModifiers(m, jcop.Globals.Modifiers.SWAPPABLE);
 		return m;
 }
 
@@ -159,7 +170,7 @@ public class InstanceLayerClassGenerator extends LayerClassGenerator {
 	private List<BodyDecl> generateBody(boolean staticactive) {		
 		List<BodyDecl> body = topLevelLayer.getBodyDeclList().fullCopy();		
 //		body.add(generateSingletonReference());		
-		body.add(generateConstructor());
+//		body.add(generateConstructor());
 		body.add(generateThisAccess(topLevelLayer));
 		body.add(generateGetNameMethod(topLevelLayer));
 		if(staticactive)  {

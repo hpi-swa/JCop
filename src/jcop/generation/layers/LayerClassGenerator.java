@@ -27,7 +27,7 @@ package jcop.generation.layers;
 
 import static jcop.Globals.Types.*;
 
-import com.sun.xml.internal.bind.v2.model.core.MaybeElement;
+//import com.sun.xml.internal.bind.v2.model.core.MaybeElement;
 
 import jcop.Globals;
 import jcop.Globals.ID;
@@ -194,6 +194,7 @@ public class LayerClassGenerator extends LayerGenerator {
 			List<ParameterDeclaration> params) {
 		List<ParameterDeclaration> newParams = new List<ParameterDeclaration>();
 		List<ParameterDeclaration> copyOfParams = params.fullCopy();
+		copyOfParams.setParent(params.getParent()); // by Hiroaki, in order to lookup type.
 		for (int i = 0; i < copyOfParams.getNumChildNoTransform(); i++) {
 			ParameterDeclaration oldParam = copyOfParams.getChild(i);
 			// String packageName = oldParam.type().packageName();

@@ -66,16 +66,16 @@ public class AspectWeaver {
 
 	private void addInpath(CharSequence workingDir, CompilerArgs args) {
 		PathList inpath = new PathList(workingDir);	
-		if (Program.hasValueForOption(CompilerOps.inpath)) 
-			inpath.add(Program.getValueForOption(CompilerOps.inpath));		
+		if (CompilerConfiguration.getInstance().hasValueForOption(CompilerOps.inpath)) 
+			inpath.add(CompilerConfiguration.getInstance().getValueForOption(CompilerOps.inpath));		
 		args.addKeyValueArg(CompilerOps.inpath, inpath);		
 	}
 
 	private void addCP(CompilerArgs args) {		
 		//instead, I try this
-		if (Program.hasValueForOption(CompilerOps.classpath)) {
+		if (CompilerConfiguration.getInstance().hasValueForOption(CompilerOps.classpath)) {
 			PathList classpath = new PathList(System.getProperties().getProperty("java.class.path", null));
-			classpath.add(Program.getValueForOption(CompilerOps.classpath));
+			classpath.add(CompilerConfiguration.getInstance().getValueForOption(CompilerOps.classpath));
 			args.addKeyValueArg(CompilerOps.classpath, classpath);		
 			args.addKeyValueArg("-aspectpath", classpath);
 		}			
@@ -94,30 +94,30 @@ public class AspectWeaver {
 
 	private Kind getInfoKind() {
 		return 
-		    Program.hasOption(CompilerOps.aspectInfo)
+		    CompilerConfiguration.getInstance().hasOption(CompilerOps.aspectInfo)
 		    ? null
 		    : IMessage.WARNING;			
 	}
 
 	private String getDebug() {
-		if (Program.hasOption(CompilerOps.aspectInfo)) 
+		if (CompilerConfiguration.getInstance().hasOption(CompilerOps.aspectInfo)) 
 			return "-g";			
 		else 
 			return "-g:none";				
 	}	
 	
 	private String getWarnings() {
-		if (Program.hasOption(CompilerOps.aspectInfo)) 
+		if (CompilerConfiguration.getInstance().hasOption(CompilerOps.aspectInfo)) 
 			return "-Xlint";			
 		else 
 			return "-Xlint:ignore";				
 	}
 
 	private CharSequence getWorkingDir() {			
-		if (Program.hasOption(CompilerOps.destinationPath))
-			return Program.getValueForOption(CompilerOps.destinationPath);
-		if (Program.hasOption(CompilerOps.sourcepath))
-			return Program.getValueForOption(CompilerOps.sourcepath);
+		if (CompilerConfiguration.getInstance().hasOption(CompilerOps.destinationPath))
+			return CompilerConfiguration.getInstance().getValueForOption(CompilerOps.destinationPath);
+		if (CompilerConfiguration.getInstance().hasOption(CompilerOps.sourcepath))
+			return CompilerConfiguration.getInstance().getValueForOption(CompilerOps.sourcepath);
 		else
 			return ".";			
 	}

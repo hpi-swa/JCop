@@ -27,13 +27,14 @@ aspect Auxiliary {
 	    	getPattern().toString(s);    	
 	    }
 	  
+	  // Commented out by Hiroaki for Java7
 	  
-	  public String Annotation.getID() {
-	  	String id = super.getID();
-	  	if (id.equals("annotation"))
-	  		id = type().getID();
-	  	return id;
-	  }
+	  // public String Annotation.getID() {
+	  // 	String id = super.getID();
+	  // 	if (id.equals("annotation"))
+	  // 		id = type().getID();
+	  // 	return id;
+	  // }
 	  
 	   public void ObjectSpecificLayerActivation.toString(StringBuffer s) {
 		      getTarget().toString(s);   

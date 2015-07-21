@@ -3,6 +3,7 @@ package jcop.lang;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -138,6 +139,12 @@ public class Composition implements Cloneable {
 	public void setInactiveFor(Object o) {
 		for (Layer l : getLayer())
 			l.setInactiveFor(o);
+	}
+
+	public Composition removeAllSubLayer(Class toBeRemoved) {
+		Composition old = this.clone();
+		boolean removed = this.layerToProxyMap.removeAllSubLayer(toBeRemoved);
+		return old;
 	}
 	
 	public Composition removeLayer(Layer toBeRemoved) {
@@ -319,7 +326,19 @@ public class Composition implements Cloneable {
 			return true;
 		}
 
+		public boolean removeAllSubLayer(Class toBeRemoved){
+			for(Layer _layer : Collections.list(activatedProxies.keys())){
+				if(toBeRemoved.isAssignableFrom(_layer.getClass())){
+					for(LayerProxy proxy : activatedProxies.get(_layer))
+						activatedLayers.remove(proxy);
+					activatedProxies.remove(_layer);
+				}
+			}
+			return true;
+		}
+
 		void addLayer(Layer toBeAdded) {
+			removeLayer(toBeAdded); // "with" semantics of ContextFJ
 			LayerProxy proxy = new LayerProxy(toBeAdded);
 			activatedLayers.add(0, proxy);
 			activatedProxies.appendValue(toBeAdded, proxy);

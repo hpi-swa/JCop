@@ -7,6 +7,10 @@ import AST.Program;
 public class CompilerConfiguration {
 	private static CompilerConfiguration instance;
 	
+	private boolean isAstTransform = true;
+	
+	private static Program program;
+	
 	private CompilerConfiguration() { }
 	
 	public static CompilerConfiguration getInstance() {
@@ -15,20 +19,29 @@ public class CompilerConfiguration {
 		return instance;
 	}
 	
+	public void setProgram(Program prg){
+		if(program == null)
+			this.program = prg;
+	}
+	
 	public boolean isJCopCompiler() {
 		return Globals.lang.equals("jcop");
 	}		
 
 	public  boolean astTransformationsDisabled() {
-		return 	generateOutline() || generateGraph();
+		return 	generateOutline() || generateGraph() || !isAstTransform;
+	}
+	
+	public void setAstTransform(boolean value){
+		isAstTransform = value;
 	}
 
 	public boolean generateAggGraph() {
-		return Program.hasValueForOption(CompilerOps.agg);	
+		return program.options().hasValueForOption(CompilerOps.agg);	
 	}
 
 	public boolean generateGrooveGraph() {
-		return Program.hasValueForOption(CompilerOps.groove);	
+		return program.options().hasValueForOption(CompilerOps.groove);	
 	} 
 	
 	public boolean generateGraph() {
@@ -36,31 +49,42 @@ public class CompilerConfiguration {
 	}
 	
 	public boolean debugMode() {		
-		return Program.hasOption(CompilerOps.debug);
+		return program.options().hasOption(CompilerOps.debug);
 	}
 	
 	public boolean generateOutline() {
-		return Program.hasOption(CompilerOps.xmlOutlinePath);
+		return program.options().hasOption(CompilerOps.xmlOutlinePath);
 	}
 
 	public boolean generateCILOutline() {
-		return Program.hasOption(CompilerOps.xmlCILOutline);
+		return program.options().hasOption(CompilerOps.xmlCILOutline);
 	}
 
 	public boolean generateAspects() {
-		return !Program.hasOption(CompilerOps.noAspects) && isJCopCompiler();
+		return !program.options().hasOption(CompilerOps.noAspects) && isJCopCompiler();
 	}
 
 	public boolean hasSourcePath() {
-		return Program.hasOption(CompilerOps.sourcepath);
+		return program.options().hasOption(CompilerOps.sourcepath);
 	}
 	
 	public boolean generateSources() {
-		return Program.hasOption(CompilerOps.dumpSources);
+		return program.options().hasOption(CompilerOps.dumpSources);
 	}
 
 	public boolean printUsage() {
-		return Program.hasOption("-version") || Program.hasOption("-help");		
+		return program.options().hasOption("-version") || program.options().hasOption("-help");		
 	}
 	
+	public boolean hasOption(String name) {
+	    return program.options().hasOption(name);
+	}
+	
+	public boolean hasValueForOption(String name) {
+	    return program.options().hasValueForOption(name);
+	}
+	
+	public String getValueForOption(String name) {
+		return program.options().getValueForOption(name);
+	}
 }

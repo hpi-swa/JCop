@@ -28,7 +28,7 @@ public class PartialLayerDefinitionTransformer extends Transformer
     JCopAspect.getInstance().addLayerImport(this.layer);
 
     for (MethodDecl pmd : this.methods) {
-      PartialMethodTransformer methodTransformer = new PartialMethodTransformer(this.layer, pmd);
+      PartialMethodTransformer methodTransformer = new PartialMethodSourceTransformer(this.layer, pmd);
       MethodDecl decl = methodTransformer.transform();
       addLayerMemberToEnclosingClass(decl);
     }

@@ -1,10 +1,11 @@
 aspect ThisLayerAccess {
+		// 通常は、ThisLayerAccessとSuperProceedExprをVarAccess("thislayer")に置きかえている？
   
   rewrite ThisLayerAccess  {
     to ASTNode {
     	if(jcop.compiler.CompilerConfiguration.getInstance().astTransformationsDisabled())
 			return super.rewriteTo();
-    	return new VarAccess(getID());
+    	return new VarAccess(getID()); // "thisLayer"が入るだけでは?
   } }
   
   
@@ -12,7 +13,10 @@ aspect ThisLayerAccess {
 	    to ASTNode {
 	    	if(jcop.compiler.CompilerConfiguration.getInstance().astTransformationsDisabled())
 				return super.rewriteTo();
-	    	return new VarAccess("thislayer");
+			else if (jcop.VisitedNodes.firstVisit(this))
+				return new jcop.transformation.SuperProceedTransformer(this).errorCheckAndTransform(hostType().compilationUnit());
+			return super.rewriteTo();			
+	    	// return new VarAccess("thislayer");
 	  } }
 
 }  

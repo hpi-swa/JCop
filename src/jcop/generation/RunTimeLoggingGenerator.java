@@ -27,7 +27,7 @@ public class RunTimeLoggingGenerator extends Generator  {
 	}
 
 	private Block genLoggingMessage(Block block, String message, String methodName) {
-		if(!Program.hasOption(Globals.CompilerOps.runtimeLogging))
+		if(!CompilerConfiguration.getInstance().hasOption(Globals.CompilerOps.runtimeLogging))
 			return block;	
 		
 		MethodAccess loggerAccess = genLoggerMethodAccess();		

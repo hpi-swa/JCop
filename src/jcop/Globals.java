@@ -72,6 +72,7 @@ public class Globals {
 		public static final String AFTER_ANNOT = "After";
 		public static final String AFTER = "after";
 		public static final String STATIC_ACTIVE = "staticactive";
+		public static final String SWAPPABLE = "swappable";
 	}
 	
 	public interface Keywords {
@@ -98,6 +99,8 @@ public class Globals {
 		public static final String debug = "-log";
 		public static final String layerpath = "-layerpath";
 		public static final String inpath = "-inpath";
+		public static final String coptypecheck = "-copcheck";
+		public static final String staticactive = "-staticactive";
 	}
 	
 	public static interface LoggingProperties {
@@ -169,7 +172,10 @@ public class Globals {
 		public static final String logAccessLayeredMethod 	= "accessing layered method of ";
 		public static final String logAccessPartialMethod 	= "accessing partial method ";
 		
+
+		// added by Hiroaki
 		
+		public static final String generalError = "[JCop] general Error";
 	}
 	
 	public interface ID {
@@ -213,6 +219,7 @@ public class Globals {
 		public static final String oldComposition = "oldComposition";
 		public static final String addLayer = "withLayer";
 		public static final String removeLayer = "removeLayer";
+		public static final String removeAllSubLayer = "removeAllSubLayer";		
 		public static final String thislayer = "_thislayer";
 		public static final String superlayer = "_superlayer_";
 		public static final String setName = "setName";

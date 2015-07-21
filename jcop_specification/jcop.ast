@@ -16,10 +16,10 @@
 //   BodyDecl* ;
    
 LayerDecl : ClassDecl ::=
-   Modifiers <ID:String> SubjectTypes:Access* [SuperClassAccess:Access]  BodyDecl*;   
+		Modifiers <ID:String> SubjectTypes:Access* [SuperClassAccess:Access]  RequireTypes:Access* BodyDecl*;   
 
 OpenLayerDecl : MemberDecl ::= 
-   TypeName:Access BodyDecl*;      
+		TypeName:Access RequireTypes:Access* BodyDecl*;      
       
 //SubjectLayerDecl : LayerDecl ::= 
    //Modifiers <ID:String> [SuperClassAccess:Access] Implements:Access* SubjectTypeAccess:Access BodyDecl* ;
@@ -101,6 +101,12 @@ LayerActivation:Stmt ::=
    Arg:Expr* 
    Block 
    <Activation:boolean> ;
+
+LayerSwapping:Stmt ::= 
+	SwappableLayer:Access
+	Arg:Expr*	
+	Block;
+
 
 ObjectSpecificLayerActivation:Stmt ::= 
    Target:Expr 

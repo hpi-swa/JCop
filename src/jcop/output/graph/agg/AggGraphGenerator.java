@@ -1,6 +1,7 @@
 package jcop.output.graph.agg;
 
 import jcop.Globals.CompilerOps;
+import jcop.compiler.CompilerConfiguration;
 import jcop.output.graph.GraphGenerator;
 import jcop.output.graph.INode;
 import AST.Program;
@@ -74,7 +75,7 @@ public class AggGraphGenerator extends GraphGenerator {
 
 	@Override
 	public void save() {
-		String file = Program.getValueForOption(CompilerOps.agg);
+		String file = CompilerConfiguration.getInstance().getValueForOption(CompilerOps.agg);
 		AggUtils.getInstance().save(file);		
 	}
 	

@@ -20,7 +20,4 @@ aspect JCopLookupTypes {
 		}    
 		return result;
 	}	
-	
-	
-	
 }

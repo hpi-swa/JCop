@@ -256,8 +256,8 @@ public class ContextComposition {
 			evaluatedContexts.add(evaluated);
 		}
 
-		public synchronized LinkedList<InternalContext> remove(	InternalContext value) {
-			return super.remove(value.getClass(), value);
+		public synchronized LinkedList<InternalContext> remove(InternalContext value) {
+			return super.myremove(value.getClass(), value);
 		}
 
 		public boolean containsContext(InternalContext value) {

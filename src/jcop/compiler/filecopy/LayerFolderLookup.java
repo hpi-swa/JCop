@@ -27,11 +27,11 @@ public class LayerFolderLookup {
 	}
 
 	private File getLayerFolder() {
-		String layerPath =  Program.getValueForOption(jcop.Globals.CompilerOps.layerpath);		
+		String layerPath =  CompilerConfiguration.getInstance().getValueForOption(jcop.Globals.CompilerOps.layerpath);		
 		File layerFolder = new File(layerPath);
 		// currently only support for one dir:				
 		if (!layerFolder.isAbsolute() && CompilerConfiguration.getInstance().hasSourcePath()) {
-			String sourcePath = Program.getValueForOption(jcop.Globals.CompilerOps.sourcepath);
+			String sourcePath = CompilerConfiguration.getInstance().getValueForOption(jcop.Globals.CompilerOps.sourcepath);
 			layerFolder = new File(sourcePath, layerFolder.getPath());
 		}
 		return layerFolder;

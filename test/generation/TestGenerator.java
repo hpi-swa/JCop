@@ -1,4 +1,4 @@
-package test.generation;
+package generation;
 
 import jcop.generation.Generator;
 import junit.framework.TestCase;

@@ -8,10 +8,12 @@ public class ArgumentParserTest extends TestCase {
 	
 	
 	public void testArgumentJoin() {
-		String sample = "-sourcepath \"test\\my folder\\with blanks\" \"../Test Project/src\" Test";
-		String[] expected= {"-sourcepath", "\"test\\my folder\\with blanks\"",  "\"../Test Project/src\"",  "Test"};
-		String [] args =sample.split(" ");		
+		String sample = "-sourcepath \"test/my folder/with blanks\" \"../Test Project/src\" Test";
+		String[] expected= {"-sourcepath", "\"test/my folder/with blanks\"",  "\"../Test Project/src\"",  "Test"};
+		String [] args =sample.split(" ");
 		ArgumentParser p = new ArgumentParser(args);
+		System.out.println(Arrays.asList(args));
+		System.out.println(Arrays.asList(p.getParsedArgs()));
 		assertEquals(Arrays.asList(expected), Arrays.asList(p.getParsedArgs()));		
 	}
 	

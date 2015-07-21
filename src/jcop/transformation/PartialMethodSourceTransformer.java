@@ -43,7 +43,7 @@ public class PartialMethodSourceTransformer extends PartialMethodTransformer {
 			if (isLayerLocalMethod() || baseMethodIsDeclaredInSuperClass()) {					
 				createBaseMethod();					
 			}
-			if (!hasLayeredMethod() )
+			if (!hasLayeredMethod())
 				createLayeredMethod();
 			if (VisitedNodes.firstVisit(baseMethod) ) 
 				transformBaseMethod();			
@@ -110,8 +110,9 @@ public class PartialMethodSourceTransformer extends PartialMethodTransformer {
 		}
 
 		public MethodDecl createLayeredMethod() {			
-			MethodDecl wrapper = baseGen.generateWrapper();			
-			addBodyDeclToEnclosing(wrapper);
+			MethodDecl wrapper = baseGen.generateWrapper();	
+			//if(baseMethod.hostType().methodsSignature(wrapper.signature()).isEmpty())
+				addBodyDeclToEnclosing(wrapper);
 			return wrapper;
 		}
 		
@@ -175,7 +176,7 @@ public class PartialMethodSourceTransformer extends PartialMethodTransformer {
 		private boolean hasLayeredMethod() {
 			MethodDecl method = baseMethod;
 
-			String sig = baseGen.genWrapperSignature();			
+			String sig = baseGen.genWrapperSignature();	// bugged	
 		    SimpleSet candidates = method.hostType().methodsSignature(sig);
 		    
 		    return (!candidates.isEmpty());	    	

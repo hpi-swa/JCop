@@ -16,7 +16,7 @@ aspect ContextConstraint {
     	getPattern().toString(s);
     	s.append(")");
     } 
-	
+
 	
     public void ModifierPattern.toString(StringBuffer s) {    	
     	getModifier().toString(s);
@@ -134,9 +134,10 @@ aspect ContextConstraint {
  		 s.append(")");
      }
 	 
-	public void ParseName.toString(StringBuffer s) {	
-		s.append(getID());
-	}
+
+	// public void ParseName.toString(StringBuffer s) {	
+	// 	s.append(getID());
+	// }
 	 
  /* rewrite DeclarativeLayerActivation {
      to EmptyStmt {
@@ -148,11 +149,11 @@ aspect ContextConstraint {
 
    public void LayerActivationBlock.toString(StringBuffer s) {
       s.append("{ \n");
-	  indent++;
+	  //indent++;
 	  for (DLALayerActivation dla : getDLALayerActivations()) {
 	     dla.toString(s);
 	  }
-	  indent--;
+	  //indent--;
 	  s.append(indent() + "} \n");
    }
 

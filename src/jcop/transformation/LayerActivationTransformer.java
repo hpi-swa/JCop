@@ -2,12 +2,14 @@ package jcop.transformation;
 
 import jcop.Globals;
 import jcop.Globals.ID;
+import jcop.compiler.CompilerConfiguration;
 import jcop.generation.layeractivation.LayerActivationGenerator;
 import AST.Block;
 import AST.Expr;
 import AST.LayerActivation;
 import AST.List;
 import AST.Program;
+
 
 public class LayerActivationTransformer extends Transformer {
 	private LayerActivation activation;
@@ -21,14 +23,14 @@ public class LayerActivationTransformer extends Transformer {
 		this.gen =	new LayerActivationGenerator(activation, getMethodName(), layers);
 	}
 
-	protected Block transform() {		
+	protected Block transform() {	
 		Block activationBlock = gen.generateActivationBlock();		
 		return activationBlock;
 	}
 		
 	private String getMethodName() {
 		final String logging = 
-			Program.hasOption(Globals.CompilerOps.runtimeLogging) 
+			CompilerConfiguration.getInstance().hasOption(Globals.CompilerOps.runtimeLogging) 
 			? "WithLogging" 
 			: "";
 		return activation.getActivation() 

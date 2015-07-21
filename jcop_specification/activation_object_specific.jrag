@@ -1,7 +1,9 @@
+import jcop.compiler.CompilerConfiguration;
+
 aspect ObjectSpecificLayerActivation {  
    rewrite ObjectSpecificLayerActivation {
       to ASTNode {
-	  	if (Program.hasOption(jcop.Globals.CompilerOps.xmlOutlinePath)) 
+		  if (CompilerConfiguration.getInstance().generateOutline())
 			return super.rewriteTo();
 		else
 			return new jcop.transformation.ImplicitLayerActivationTransformer(this).errorCheckAndTransform(hostType().compilationUnit());

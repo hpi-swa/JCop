@@ -1,0 +1,25 @@
+aspect LayerSwapping {
+	syn boolean LayerSwapping.isMethodParameter() = false;
+		// 
+  	public void LayerSwapping.toString(StringBuffer s) {
+		s.append("swap (");
+		for (Expr arg : getArgs()) {
+			arg.toString(s);
+			s.append(", ");
+		}
+		s.append(getSwappableLayer().toString());
+		// if (getArgs().numChildren() > 0)
+		// 	s.delete(s.length()-2, s.length());
+		s.append(") ");
+		getBlock().toString(s);
+	}
+
+  rewrite LayerSwapping {
+   to ASTNode {   
+	   	if(jcop.compiler.CompilerConfiguration.getInstance().astTransformationsDisabled())
+			return super.rewriteTo();
+		else
+			return new jcop.transformation.LayerSwappingTransformer(this).errorCheckAndTransform(hostType().compilationUnit());
+    }
+  }    		 
+}

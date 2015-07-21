@@ -99,6 +99,8 @@ aspect LayerDecl {
 	eq LayerDecl.getBodyDecl().mayBeStaticActive() = true;
 	
 	syn boolean TypeDecl.isLayerDecl() = false;
+//	syn boolean TypeDecl.isLayerDecl()
+// jcop.lang.Layerならtrueにすべきか
 	eq LayerDecl.isLayerDecl() = true;
 	
 	

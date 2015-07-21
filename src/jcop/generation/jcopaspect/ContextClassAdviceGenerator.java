@@ -5,6 +5,7 @@ package jcop.generation.jcopaspect;
 
 import java.util.List;
 
+import jcop.compiler.CompilerConfiguration;
 import jcop.generation.jcopaspect.internal.SourceCodeBuffer;
 
 import org.aspectj.weaver.patterns.IfPointcut;
@@ -66,7 +67,7 @@ class ContextClassAdviceGenerator extends AdviceGenerator {
 		      addPointcut();
 		    SourceCodeBuffer loggingBlock = new SourceCodeBuffer();
 		    String loggingStmt = "";
-		    if (Program.hasOption("-rtl")) {
+		    if (CompilerConfiguration.getInstance().hasOption("-rtl")) {
 		      loggingBlock = 
 		        block(new CharSequence[] { 
 		        syserr(new CharSequence[] { "'maybe activate context for method' + thisJoinPoint.getSignature().toLongString()" }), 

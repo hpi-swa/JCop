@@ -106,8 +106,12 @@ public class AuxiliaryCompilerFilesHandler {
 		//removeJCopSpecificClassFiles();	
 	}
 	
+	// modified by hiro
 	private void copyLayerClassesToFolder(File destinationFolder) {	
 		for (String sourceFile : fileHandler.collectFileNames(Globals.jcopFilesSrcFolder, getJavaClassFolderName(isJCop), "java")) {			
+			copyFileToFolder(destinationFolder, sourceFile, getJavaClassFolderName(isJCop));		
+		}
+		for (String sourceFile : fileHandler.collectFileNames(Globals.jcopFilesSrcFolder, getJavaClassFolderName(isJCop), "jcop")) {			
 			copyFileToFolder(destinationFolder, sourceFile, getJavaClassFolderName(isJCop));		
 		}
 	}
@@ -176,8 +180,8 @@ public class AuxiliaryCompilerFilesHandler {
 	
 	private File getDir(String ops) {
 		StringBuffer path = getWorkingDir();		
-		if (Program.hasOption(ops))
-			path = new StringBuffer(Program.getValueForOption(ops)); 	
+		if (CompilerConfiguration.getInstance().hasOption(ops))
+			path = new StringBuffer(CompilerConfiguration.getInstance().getValueForOption(ops)); 	
 		return new File(path.toString());
 	}	
 	
@@ -188,8 +192,8 @@ public class AuxiliaryCompilerFilesHandler {
 	}
 	
 	private StringBuffer createWorkingDir() {
-		String dir = Program.hasValueForOption(CompilerOps.sourcepath)
-						? Program.getValueForOption(CompilerOps.sourcepath)
+		String dir = CompilerConfiguration.getInstance().hasValueForOption(CompilerOps.sourcepath)
+						? CompilerConfiguration.getInstance().getValueForOption(CompilerOps.sourcepath)
 						:  System.getProperty("user.dir");		
 		return new StringBuffer(dir);
 	}
